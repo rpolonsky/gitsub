@@ -1,4 +1,14 @@
+.section {
+  display: flex;
+  padding: 20px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+}
 .item {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
