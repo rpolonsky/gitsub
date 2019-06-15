@@ -1,14 +1,21 @@
 .section {
   display: flex;
+  justify-content: stretch;
   padding: 20px;
   border: 1px solid black;
   margin-bottom: 10px;
+  width: 300px;
 }
 .col {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 .item {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  padding: 5px;
+  margin: 2px 0;
+  border: 1px solid #eff8fe;
 }

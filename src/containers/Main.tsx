@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { useBaseStore } from '../stores';
 
 import './main.css';
 
 const Main = () => {
+  const [followList, setFollowList] = useState<any[]>([]);
   const [nickname, setNickname] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const {
     main: { getUserFollowingList, followUsers, following, loading, remainingRateLimit },
   } = useBaseStore();
+
+  useEffect(() => {
+    setFollowList(following);
+  }, [following]);
 
   return (
     <div>
@@ -21,37 +26,57 @@ const Main = () => {
           <input type="text" value={token} onChange={e => setToken(e.target.value)}></input>
         </div>
       </div>
-      {loading ? (
-        'Loading...'
-      ) : (
-        <div className="section">
-          <input type="text" value={nickname} onChange={e => setNickname(e.target.value)}></input>
+      <div className="section">
+        <input type="text" value={nickname} onChange={e => setNickname(e.target.value)}></input>
+        <button
+          onClick={() => {
+            getUserFollowingList(nickname, username, token);
+          }}
+          disabled={loading}
+        >
+          Start
+        </button>
+      </div>
+      <div className="section col">
+        {!!following.length && (
           <button
             onClick={() => {
-              getUserFollowingList(nickname, username, token);
+              followUsers(followList, username, token);
             }}
           >
-            Start
+            Follow {followList.length} users
           </button>
-          {!!following.length && (
-            <button
-              onClick={() => {
-                followUsers([following[5].login], username, token);
+        )}
+        {following.map((user: any, index) => (
+          <a
+            href={`https://github.com/${user.login}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            key={user.login}
+            className="item"
+          >
+            <input
+              type="checkbox"
+              name={user.login}
+              onChange={e => {
+                const currentIndex = followList.findIndex((u: any) => u.login === e.target.name);
+                const newFollowList = [...followList];
+
+                if (currentIndex !== -1) {
+                  newFollowList.splice(currentIndex, 1);
+                } else {
+                  newFollowList.splice(index, 0, user);
+                }
+                setFollowList(newFollowList);
               }}
-            >
-              Follow {following[5].login}
-            </button>
-          )}
-        </div>
-      )}
-      <div className="section col">
-        {following.map((user: any) => (
-          <a href={user.followers_url} key={user.login} className="item">
+              checked={followList.findIndex((u: any) => u.login === user.login) !== -1}
+            />
             <img width={50} height={50} src={user.avatar_url} alt={user.login} />
-            <div>Type: {user.type}</div>
-            <div>Name: {user.login}</div>
+            <div>{user.login}</div>
+            <div>{user.processed && 'processed'}</div>
           </a>
         ))}
+        {loading && 'Loading...'}
       </div>
     </div>
   );
