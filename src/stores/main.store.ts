@@ -12,7 +12,8 @@ interface Main {
   remainingRateLimit: string;
 }
 
-const MAX_PAGE_LIMIT = 5;
+const TIMEOUT = 0;
+const MAX_PAGE_LIMIT = 0;
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
 const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 
@@ -54,7 +55,7 @@ class MainStore implements Main {
 
         if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
           this.page++;
-          setTimeout(() => recursive(), 200);
+          setTimeout(() => recursive(), TIMEOUT);
         } else {
           this.loading = false;
         }
@@ -81,7 +82,7 @@ class MainStore implements Main {
           return;
         }
 
-        await axios.put(
+        const { headers } = await axios.put(
           GH_FOLLOW_URL_TEMPLATE.replace('%USERNAME%', this.currentTarget.login),
           {},
           {
@@ -92,10 +93,14 @@ class MainStore implements Main {
           },
         );
 
+        this.remainingRateLimit = `${headers['x-ratelimit-remaining']} of ${
+          headers['x-ratelimit-limit']
+        } till ${new Date(headers['x-ratelimit-reset'] * 1000)}`;
+
         if (this.targets.length) {
           setTimeout(() => {
             recursive();
-          }, 200);
+          }, TIMEOUT);
         } else {
           this.processing = false;
         }
