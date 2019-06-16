@@ -10,7 +10,17 @@ const Main = () => {
   const [username, setUsername] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const {
-    main: { getUserFollowingList, followUsers, following, loading, remainingRateLimit },
+    main: {
+      getUserFollowingList,
+      followUsers,
+      following,
+      targets,
+      currentTarget,
+      loading,
+      processing,
+      remainingRateLimit,
+      page,
+    },
   } = useBaseStore();
 
   useEffect(() => {
@@ -37,6 +47,12 @@ const Main = () => {
           Start
         </button>
       </div>
+      {processing && (
+        <div className="section col">
+          <div>{targets.length} targets left</div>
+          <div>Current target {currentTarget.login}</div>
+        </div>
+      )}
       <div className="section col">
         {!!following.length && (
           <button
@@ -44,9 +60,10 @@ const Main = () => {
               followUsers(followList, username, token);
             }}
           >
-            Follow {followList.length} users
+            {loading ? `Loading page #${page}...` : `Follow ${followList.length} users`}
           </button>
         )}
+
         {following.map((user: any, index) => (
           <a
             href={`https://github.com/${user.login}`}
@@ -76,7 +93,6 @@ const Main = () => {
             <div>{user.processed && 'processed'}</div>
           </a>
         ))}
-        {loading && 'Loading...'}
       </div>
     </div>
   );
