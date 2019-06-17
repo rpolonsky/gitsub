@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { useBaseStore } from '../stores';
 
-import './main.css';
+import './Main.css';
 
 const Main = () => {
   const [followList, setFollowList] = useState<any[]>([]);
@@ -32,20 +32,43 @@ const Main = () => {
       <div className="section">
         <div className="col">
           Remaining rate limit: {remainingRateLimit}
-          <input type="text" value={username} onChange={e => setUsername(e.target.value)}></input>
-          <input type="text" value={token} onChange={e => setToken(e.target.value)}></input>
+          <br />
+          <label htmlFor="user[login]">Input your github nickname:</label>
+          <input
+            id="user[login]"
+            type="text"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          ></input>
+          <label htmlFor="token">Input your github access token (it will not be stored):</label>
+          <input
+            id="token"
+            type="text"
+            value={token}
+            onChange={e => setToken(e.target.value)}
+          ></input>
         </div>
       </div>
       <div className="section">
-        <input type="text" value={nickname} onChange={e => setNickname(e.target.value)}></input>
-        <button
-          onClick={() => {
-            getUserFollowingList(nickname, username, token);
-          }}
-          disabled={loading}
-        >
-          Start
-        </button>
+        <div className="col">
+          <label htmlFor="user[target]">Input username which connections will be parsed:</label>
+          <div>
+            <input
+              id="user[target]"
+              type="text"
+              value={nickname}
+              onChange={e => setNickname(e.target.value)}
+            ></input>
+            <button
+              onClick={() => {
+                getUserFollowingList(nickname, username, token);
+              }}
+              disabled={loading}
+            >
+              Start
+            </button>
+          </div>
+        </div>
       </div>
       {processing && (
         <div className="section col">
