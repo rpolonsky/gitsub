@@ -4,6 +4,24 @@ import { useBaseStore } from '../stores';
 
 import './Main.css';
 
+const UserItem = ({ user, onClick, checked }: any) => {
+  return (
+    <div className="item" onClick={onClick}>
+      <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
+      <img width={50} height={50} src={user.avatar_url} alt={user.login} />
+      <a
+        href={`https://github.com/${user.login}`}
+        onClick={e => e.stopPropagation()}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {user.login}
+      </a>
+      <div>{true && 'processed'}</div>
+    </div>
+  );
+};
+
 const Main = () => {
   const [followList, setFollowList] = useState<any[]>([]);
   const [nickname, setNickname] = useState<string>('');
@@ -31,7 +49,7 @@ const Main = () => {
     <div>
       <div className="section">
         <div className="col">
-          Remaining rate limit: {remainingRateLimit}
+          <span>Remaining rate limit: {remainingRateLimit}</span>
           <br />
           <label htmlFor="user[login]">Input your github nickname:</label>
           <input
@@ -51,14 +69,15 @@ const Main = () => {
       </div>
       <div className="section">
         <div className="col">
-          <label htmlFor="user[target]">Input username which connections will be parsed:</label>
-          <div>
+          <label htmlFor="user[target]">Input username which connections will be loaded:</label>
+          <div className="col">
             <input
               id="user[target]"
               type="text"
               value={nickname}
               onChange={e => setNickname(e.target.value)}
             ></input>
+            <br />
             <button
               onClick={() => {
                 getUserFollowingList(nickname, username, token);
@@ -88,33 +107,22 @@ const Main = () => {
         )}
 
         {following.map((user: any, index) => (
-          <a
-            href={`https://github.com/${user.login}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <UserItem
             key={user.login}
-            className="item"
-          >
-            <input
-              type="checkbox"
-              name={user.login}
-              onChange={e => {
-                const currentIndex = followList.findIndex((u: any) => u.login === e.target.name);
-                const newFollowList = [...followList];
+            user={user}
+            checked={followList.findIndex((u: any) => u.login === user.login) !== -1}
+            onClick={() => {
+              const currentIndex = followList.findIndex((u: any) => u.login === user.login);
+              const newFollowList = [...followList];
 
-                if (currentIndex !== -1) {
-                  newFollowList.splice(currentIndex, 1);
-                } else {
-                  newFollowList.splice(index, 0, user);
-                }
-                setFollowList(newFollowList);
-              }}
-              checked={followList.findIndex((u: any) => u.login === user.login) !== -1}
-            />
-            <img width={50} height={50} src={user.avatar_url} alt={user.login} />
-            <div>{user.login}</div>
-            <div>{user.processed && 'processed'}</div>
-          </a>
+              if (currentIndex !== -1) {
+                newFollowList.splice(currentIndex, 1);
+              } else {
+                newFollowList.splice(index, 0, user);
+              }
+              setFollowList(newFollowList);
+            }}
+          />
         ))}
       </div>
     </div>
