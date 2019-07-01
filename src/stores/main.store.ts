@@ -9,7 +9,7 @@ interface Main {
   error: string;
   loading: boolean;
   processing: boolean;
-  remainingRateLimit: string;
+  remainingRateLimit?: string;
 }
 
 const TIMEOUT = 0;
@@ -21,7 +21,7 @@ class MainStore implements Main {
   @observable following: any[] = [];
   @observable targets: any[] = [];
   @observable currentTarget: any = null;
-  @observable remainingRateLimit: string = 'unknown';
+  @observable remainingRateLimit: string | undefined;
   @observable loading = false;
   @observable processing = false;
   @observable page = 1;

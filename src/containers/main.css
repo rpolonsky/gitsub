@@ -4,7 +4,22 @@
   padding: 20px;
   border: 1px solid black;
   margin-bottom: 10px;
-  width: 300px;
+  width: 500px;
+  background-color: #fff;
+}
+.sectionTitle {
+  position: absolute;
+  transform: translateY(-30px);
+  text-align: center;
+  line-height: 20px;
+  background: white;
+  text-transform: lowercase;
+}
+.sectionTitle:before {
+  content: '[';
+}
+.sectionTitle:after {
+  content: ']';
 }
 .col {
   display: flex;
@@ -19,4 +34,8 @@
   margin: 2px 0;
   border: 1px solid #eff8fe;
   cursor: pointer;
+}
+.item .name {
+  flex: 1;
+  padding: 10px;
 }

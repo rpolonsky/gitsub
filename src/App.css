@@ -1,3 +1,6 @@
+* {
+  font-family: 'Space Mono', regular;
+}
 .app {
   display: flex;
   justify-content: center;
@@ -5,9 +8,8 @@
 
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-
-  width: 500px;
   padding: 20px;
 }

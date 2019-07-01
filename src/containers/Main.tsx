@@ -14,10 +14,11 @@ const UserItem = ({ user, onClick, checked }: any) => {
         onClick={e => e.stopPropagation()}
         target="_blank"
         rel="noopener noreferrer"
+        className="name"
       >
         {user.login}
       </a>
-      <div>{true && 'processed'}</div>
+      {user.processed && 'processed'}
     </div>
   );
 };
@@ -47,10 +48,15 @@ const Main = () => {
 
   return (
     <div>
+      {!!remainingRateLimit && (
+        <div className="section">
+          <div className="sectionTitle">rate limits</div>
+          <span>{remainingRateLimit}</span>
+        </div>
+      )}
       <div className="section">
+        <div className="sectionTitle">your credentials</div>
         <div className="col">
-          <span>Remaining rate limit: {remainingRateLimit}</span>
-          <br />
           <label htmlFor="user[login]">Input your github nickname:</label>
           <input
             id="user[login]"
@@ -68,6 +74,7 @@ const Main = () => {
         </div>
       </div>
       <div className="section">
+        <div className="sectionTitle">another user name as source of connections</div>
         <div className="col">
           <label htmlFor="user[target]">Input username which connections will be loaded:</label>
           <div className="col">
@@ -75,6 +82,7 @@ const Main = () => {
               id="user[target]"
               type="text"
               value={nickname}
+              placeholder="ex.: rpolonsky"
               onChange={e => setNickname(e.target.value)}
             ></input>
             <br />
@@ -96,6 +104,7 @@ const Main = () => {
         </div>
       )}
       <div className="section col">
+        <div className="sectionTitle">list of connections</div>
         {!!following.length && (
           <button
             onClick={() => {
