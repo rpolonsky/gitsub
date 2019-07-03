@@ -35,7 +35,14 @@
   border: 1px solid #eff8fe;
   cursor: pointer;
 }
+.item img {
+  width: 50px;
+  height: 50px;
+}
 .item .name {
   flex: 1;
   padding: 10px;
+}
+.item.unselected {
+  opacity: 0.3;
 }

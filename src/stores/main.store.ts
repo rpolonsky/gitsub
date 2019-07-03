@@ -1,6 +1,12 @@
 import { observable, action } from 'mobx';
 import axios from 'axios';
 
+type RateLimit = {
+  limit: string;
+  remaining: string;
+  resetDate: Date;
+};
+
 interface Main {
   following: any[];
   targets: any[];
@@ -9,7 +15,7 @@ interface Main {
   error: string;
   loading: boolean;
   processing: boolean;
-  remainingRateLimit?: string;
+  remainingRateLimit?: RateLimit;
 }
 
 const TIMEOUT = 0;
@@ -17,11 +23,17 @@ const MAX_PAGE_LIMIT = 0;
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
 const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 
+const getRateLimit = (headers: {[key: string]: string}): RateLimit => ({
+  limit: headers['x-ratelimit-limit'],
+  remaining: headers['x-ratelimit-remaining'],
+  resetDate: new Date(+headers['x-ratelimit-reset'] * 1000),
+});
+
 class MainStore implements Main {
   @observable following: any[] = [];
   @observable targets: any[] = [];
   @observable currentTarget: any = null;
-  @observable remainingRateLimit: string | undefined;
+  @observable remainingRateLimit: RateLimit | undefined;
   @observable loading = false;
   @observable processing = false;
   @observable page = 1;
@@ -49,9 +61,7 @@ class MainStore implements Main {
           this.following.push(...result.data);
         }
 
-        this.remainingRateLimit = `${result.headers['x-ratelimit-remaining']} of ${
-          result.headers['x-ratelimit-limit']
-        } till ${new Date(result.headers['x-ratelimit-reset'] * 1000)}`;
+        this.remainingRateLimit = getRateLimit(result.headers);
 
         if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
           this.page++;
@@ -93,9 +103,7 @@ class MainStore implements Main {
           },
         );
 
-        this.remainingRateLimit = `${headers['x-ratelimit-remaining']} of ${
-          headers['x-ratelimit-limit']
-        } till ${new Date(headers['x-ratelimit-reset'] * 1000)}`;
+        this.remainingRateLimit = getRateLimit(headers);
 
         if (this.targets.length) {
           setTimeout(() => {

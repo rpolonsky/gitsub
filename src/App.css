@@ -1,6 +1,13 @@
 * {
   font-family: 'Space Mono', regular;
 }
+button {
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #aaa;
+  border-bottom: 1px solid #777;
+  border-right: 1px solid #777;
+}
 .app {
   display: flex;
   justify-content: center;

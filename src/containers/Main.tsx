@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { useBaseStore } from '../stores';
+import cx from 'classnames';
 
 import './Main.css';
 
 const UserItem = ({ user, onClick, checked }: any) => {
   return (
-    <div className="item" onClick={onClick}>
+    <div className={cx('item', { unselected: !checked })} onClick={onClick}>
       <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
-      <img width={50} height={50} src={user.avatar_url} alt={user.login} />
-      <a
-        href={`https://github.com/${user.login}`}
-        onClick={e => e.stopPropagation()}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="name"
-      >
-        {user.login}
-      </a>
+      <img src={user.avatar_url} alt={user.login} />
+      <div className="name">
+        <a
+          href={`https://github.com/${user.login}`}
+          onClick={e => e.stopPropagation()}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {user.login}
+        </a>
+      </div>
       {user.processed && 'processed'}
     </div>
   );
@@ -25,7 +27,7 @@ const UserItem = ({ user, onClick, checked }: any) => {
 
 const Main = () => {
   const [followList, setFollowList] = useState<any[]>([]);
-  const [nickname, setNickname] = useState<string>('');
+  const [sourceUsername, setSourceUsername] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const {
@@ -49,9 +51,12 @@ const Main = () => {
   return (
     <div>
       {!!remainingRateLimit && (
-        <div className="section">
+        <div className="section col">
           <div className="sectionTitle">rate limits</div>
-          <span>{remainingRateLimit}</span>
+          <div>
+            available: {remainingRateLimit.remaining} out of {remainingRateLimit.limit} requests
+          </div>
+          <div>reset time: {remainingRateLimit.resetDate.toLocaleString()}</div>
         </div>
       )}
       <div className="section">
@@ -81,14 +86,14 @@ const Main = () => {
             <input
               id="user[target]"
               type="text"
-              value={nickname}
+              value={sourceUsername}
               placeholder="ex.: rpolonsky"
-              onChange={e => setNickname(e.target.value)}
+              onChange={e => setSourceUsername(e.target.value)}
             ></input>
             <br />
             <button
               onClick={() => {
-                getUserFollowingList(nickname, username, token);
+                getUserFollowingList(sourceUsername, username, token);
               }}
               disabled={loading}
             >
@@ -104,7 +109,10 @@ const Main = () => {
         </div>
       )}
       <div className="section col">
-        <div className="sectionTitle">list of connections</div>
+        <div className="sectionTitle">
+          {!!sourceUsername.length && `${sourceUsername}'s `}list of connections
+        </div>
+        {!following.length && !loading && 'empty yet...'}
         {!!following.length && (
           <button
             onClick={() => {
