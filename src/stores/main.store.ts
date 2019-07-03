@@ -23,7 +23,7 @@ const MAX_PAGE_LIMIT = 0;
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
 const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 
-const getRateLimit = (headers: {[key: string]: string}): RateLimit => ({
+const getRateLimit = (headers: { [key: string]: string }): RateLimit => ({
   limit: headers['x-ratelimit-limit'],
   remaining: headers['x-ratelimit-remaining'],
   resetDate: new Date(+headers['x-ratelimit-reset'] * 1000),
@@ -39,6 +39,9 @@ class MainStore implements Main {
   @observable page = 1;
   @observable error = '';
 
+  @action resetError = () => {
+    this.error = '';
+  };
   @action getUserFollowingList = (targetUser: string, username: string, token: string) => {
     try {
       this.loading = true;
@@ -74,18 +77,17 @@ class MainStore implements Main {
       recursive();
     } catch (error) {
       console.error('error', error);
-      this.error = error;
+      this.error = error.message ?? error;
       this.following = [];
       this.loading = false;
     }
   };
-
   @action followUsers = (users: any[], username: string, token: string) => {
-    try {
-      this.processing = true;
-      this.targets = [...users];
+    this.processing = true;
+    this.targets = [...users];
 
-      const recursive = async () => {
+    const recursive = async () => {
+      try {
         this.currentTarget = this.targets.shift();
 
         if (!this.currentTarget) {
@@ -112,13 +114,13 @@ class MainStore implements Main {
         } else {
           this.processing = false;
         }
-      };
-      recursive();
-    } catch (error) {
-      console.error('error', error);
-      this.error = error;
-      this.processing = false;
-    }
+      } catch (error) {
+        console.error('error', error);
+        this.error = error.message ?? error;
+        this.processing = false;
+      }
+    };
+    recursive();
   };
 }
 
