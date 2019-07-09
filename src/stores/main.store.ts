@@ -45,6 +45,8 @@ class MainStore implements Main {
   @action getUserFollowingList = (targetUser: string, username: string, token: string) => {
     try {
       this.loading = true;
+      this.page = 1;
+      this.following = [];
 
       const recursive = async () => {
         const result = await axios.get(
