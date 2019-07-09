@@ -1,0 +1,48 @@
+.section {
+  display: flex;
+  justify-content: stretch;
+  padding: 20px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  width: 500px;
+  background-color: #fff;
+}
+.sectionTitle {
+  position: absolute;
+  transform: translateY(-30px);
+  text-align: center;
+  line-height: 20px;
+  background: white;
+  text-transform: lowercase;
+}
+.sectionTitle:before {
+  content: '[';
+}
+.sectionTitle:after {
+  content: ']';
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 5px;
+  margin: 2px 0;
+  border: 1px solid #eff8fe;
+  cursor: pointer;
+}
+.item img {
+  width: 50px;
+  height: 50px;
+}
+.item .name {
+  flex: 1;
+  padding: 10px;
+}
+.item.unselected {
+  opacity: 0.3;
+}
