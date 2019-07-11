@@ -51,7 +51,7 @@ const Main = () => {
   return (
     <>
       {!!remainingRateLimit && (
-        <div className="section col">
+        <div className="section">
           <div className="sectionTitle">rate limits</div>
           <div>
             available: {remainingRateLimit.remaining} out of {remainingRateLimit.limit} requests
@@ -61,54 +61,48 @@ const Main = () => {
       )}
       <div className="section">
         <div className="sectionTitle">your credentials</div>
-        <div className="col">
-          <label htmlFor="user[login]">Your github nickname:</label>
-          <input
-            id="user[login]"
-            type="text"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-          ></input>
-          <label htmlFor="token">Your github access token (it will not be stored):</label>
-          <input
-            id="token"
-            type="text"
-            value={token}
-            onChange={e => setToken(e.target.value)}
-          ></input>
-        </div>
+        <label htmlFor="user[login]">Your github nickname:</label>
+        <input
+          id="user[login]"
+          type="text"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        ></input>
+        <label htmlFor="token">Your github access token (it will not be stored):</label>
+        <input
+          id="token"
+          type="text"
+          value={token}
+          onChange={e => setToken(e.target.value)}
+        ></input>
       </div>
       <div className="section">
         <div className="sectionTitle">user as source of connections</div>
-        <div className="col">
-          <label htmlFor="user[target]">User which connections will be loaded:</label>
-          <div className="col">
-            <input
-              id="user[target]"
-              type="text"
-              value={sourceUsername}
-              placeholder="ex.: rpolonsky"
-              onChange={e => setSourceUsername(e.target.value)}
-            ></input>
-            <br />
-            <button
-              onClick={() => {
-                getUserFollowingList(sourceUsername, username, token);
-              }}
-              disabled={loading}
-            >
-              Start
-            </button>
-          </div>
-        </div>
+        <label htmlFor="user[target]">User which connections will be loaded:</label>
+        <input
+          id="user[target]"
+          type="text"
+          value={sourceUsername}
+          placeholder="ex.: rpolonsky"
+          onChange={e => setSourceUsername(e.target.value)}
+        ></input>
+        <br />
+        <button
+          onClick={() => {
+            getUserFollowingList(sourceUsername, username, token);
+          }}
+          disabled={loading}
+        >
+          Start
+        </button>
       </div>
       {processing && (
-        <div className="section col">
+        <div className="section">
           <div>{targets.length} targets left</div>
           <div>Current target {currentTarget.login}</div>
         </div>
       )}
-      <div className="section col">
+      <div className="section">
         <div className="sectionTitle">
           {!!sourceUsername.length && `${sourceUsername}'s `}list of connections
         </div>

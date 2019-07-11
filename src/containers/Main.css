@@ -1,6 +1,8 @@
 .section {
   display: flex;
+  flex-direction: column;
   justify-content: stretch;
+  align-items: stretch;
   padding: 20px;
   border: 1px solid black;
   margin-bottom: 10px;
@@ -24,11 +26,6 @@
 }
 .sectionTitle:after {
   content: ']';
-}
-.col {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 }
 .item {
   display: flex;
