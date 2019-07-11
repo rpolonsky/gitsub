@@ -1,5 +1,6 @@
 * {
   font-family: 'Space Mono', regular;
+  box-sizing: border-box;
 }
 button {
   cursor: pointer;
@@ -17,6 +18,13 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  width: 45%;
   padding: 20px;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding: 15px;
+  }
 }

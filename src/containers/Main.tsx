@@ -49,7 +49,7 @@ const Main = () => {
   }, [following]);
 
   return (
-    <div>
+    <>
       {!!remainingRateLimit && (
         <div className="section col">
           <div className="sectionTitle">rate limits</div>
@@ -62,14 +62,14 @@ const Main = () => {
       <div className="section">
         <div className="sectionTitle">your credentials</div>
         <div className="col">
-          <label htmlFor="user[login]">Input your github nickname:</label>
+          <label htmlFor="user[login]">Your github nickname:</label>
           <input
             id="user[login]"
             type="text"
             value={username}
             onChange={e => setUsername(e.target.value)}
           ></input>
-          <label htmlFor="token">Input your github access token (it will not be stored):</label>
+          <label htmlFor="token">Your github access token (it will not be stored):</label>
           <input
             id="token"
             type="text"
@@ -79,9 +79,9 @@ const Main = () => {
         </div>
       </div>
       <div className="section">
-        <div className="sectionTitle">another user name as source of connections</div>
+        <div className="sectionTitle">user as source of connections</div>
         <div className="col">
-          <label htmlFor="user[target]">Input username which connections will be loaded:</label>
+          <label htmlFor="user[target]">User which connections will be loaded:</label>
           <div className="col">
             <input
               id="user[target]"
@@ -112,7 +112,7 @@ const Main = () => {
         <div className="sectionTitle">
           {!!sourceUsername.length && `${sourceUsername}'s `}list of connections
         </div>
-        {!following.length && !loading && 'empty yet...'}
+        {!following.length && !loading && 'yet empty...'}
         {!!following.length && (
           <button
             onClick={() => {
@@ -142,7 +142,7 @@ const Main = () => {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: column;
   font-size: 12px;
+  white-space: nowrap;
 }
 .social .icons {
   display: flex;
@@ -22,4 +23,14 @@
 }
 .social img {
   height: 30px;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    font-size: 30px;
+  }
+  .social {
+    align-self: flex-end;
+  }
 }

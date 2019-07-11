@@ -4,7 +4,7 @@
   padding: 20px;
   border: 1px solid black;
   margin-bottom: 10px;
-  width: 500px;
+  width: 100%;
   background-color: #fff;
 }
 .sectionTitle {
@@ -14,6 +14,10 @@
   line-height: 20px;
   background: white;
   text-transform: lowercase;
+  max-width: calc(100% - 75px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-y: auto;
 }
 .sectionTitle:before {
   content: '[';
