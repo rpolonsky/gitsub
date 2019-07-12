@@ -85,6 +85,11 @@ const Main = () => {
           value={sourceUsername}
           placeholder="ex.: rpolonsky"
           onChange={e => setSourceUsername(e.target.value)}
+          onKeyUp={e => {
+            if (e.keyCode === 13) {
+              getUserFollowingList(sourceUsername, username, token);
+            }
+          }}
         ></input>
         <br />
         <button

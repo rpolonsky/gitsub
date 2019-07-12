@@ -2,6 +2,12 @@
   font-family: 'Space Mono', regular;
   box-sizing: border-box;
 }
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
 button {
   cursor: pointer;
   background-color: #fff;

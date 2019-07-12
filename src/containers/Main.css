@@ -33,12 +33,13 @@
   align-items: center;
   padding: 5px;
   margin: 2px 0;
-  border: 1px solid #eff8fe;
+  border: 1px solid #efefef;
   cursor: pointer;
 }
 .item img {
   width: 50px;
   height: 50px;
+  margin: 0 5px;
 }
 .item .name {
   flex: 1;

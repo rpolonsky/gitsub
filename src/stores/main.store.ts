@@ -108,6 +108,7 @@ class MainStore implements Main {
         );
 
         this.remainingRateLimit = getRateLimit(headers);
+        this.currentTarget.processed = true;
 
         if (this.targets.length) {
           setTimeout(() => {
