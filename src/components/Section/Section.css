@@ -1,0 +1,29 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
+  padding: 20px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  width: 100%;
+  background-color: #fff;
+}
+.sectionTitle {
+  position: absolute;
+  transform: translateY(-30px);
+  text-align: center;
+  line-height: 20px;
+  background: white;
+  text-transform: lowercase;
+  max-width: calc(100% - 75px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-y: auto;
+}
+.sectionTitle:before {
+  content: '[';
+}
+.sectionTitle:after {
+  content: ']';
+}

@@ -1,13 +1,22 @@
+body {
+  margin: 0;
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 * {
   font-family: 'Space Mono', regular;
   box-sizing: border-box;
 }
+
 input:focus,
 select:focus,
 textarea:focus,
 button:focus {
   outline: none;
 }
+
 button {
   cursor: pointer;
   background-color: #fff;
@@ -15,6 +24,7 @@ button {
   border-bottom: 1px solid #777;
   border-right: 1px solid #777;
 }
+
 .app {
   display: flex;
   justify-content: center;
