@@ -1,8 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { useBaseStore } from '../stores';
 
-import './Main.css';
+import { useBaseStore } from '../../stores';
+import Section from '../../components/Section/Section';
+
 import './Alert.css';
 
 const Alert = () => {
@@ -15,11 +16,10 @@ const Alert = () => {
   }
   return (
     <div className="overlay" onClick={resetError}>
-      <div className="alert section">
-        <div className="sectionTitle title">Warning!</div>
+      <Section title="Warning!" titleClassName="title" className="alert">
         {error}
         <button onClick={resetError}>OK</button>
-      </div>
+      </Section>
     </div>
   );
 };

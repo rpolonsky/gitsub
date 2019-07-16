@@ -1,7 +1,7 @@
 import React from 'react';
-import Main from './containers/Main';
-import Header from './containers/Header';
-import Alert from './containers/Alert';
+import Main from './containers/Main/Main';
+import Header from './components/Header/Header';
+import Alert from './containers/Alert/Alert';
 
 import './App.css';
 

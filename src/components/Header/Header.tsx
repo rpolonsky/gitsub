@@ -1,8 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 
-import github from '../icons/github.png';
-import linkedin from '../icons/linkedin.png';
+import github from '../../icons/github.png';
+import linkedin from '../../icons/linkedin.png';
 
 import './Header.css';
 

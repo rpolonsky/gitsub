@@ -1,7 +1,9 @@
+import cx from 'classnames';
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { useBaseStore } from '../stores';
-import cx from 'classnames';
+
+import Section from '../../components/Section/Section';
+import { useBaseStore } from '../../stores';
 
 import './Main.css';
 
@@ -51,16 +53,14 @@ const Main = () => {
   return (
     <>
       {!!remainingRateLimit && (
-        <div className="section">
-          <div className="sectionTitle">rate limits</div>
+        <Section title="rate limits">
           <div>
             available: {remainingRateLimit.remaining} out of {remainingRateLimit.limit} requests
           </div>
           <div>reset time: {remainingRateLimit.resetDate.toLocaleString()}</div>
-        </div>
+        </Section>
       )}
-      <div className="section">
-        <div className="sectionTitle">your credentials</div>
+      <Section title="your credentials">
         <label htmlFor="user[login]">Your github nickname:</label>
         <input
           id="user[login]"
@@ -75,9 +75,8 @@ const Main = () => {
           value={token}
           onChange={e => setToken(e.target.value)}
         ></input>
-      </div>
-      <div className="section">
-        <div className="sectionTitle">user as source of connections</div>
+      </Section>
+      <Section title="user as source of connections">
         <label htmlFor="user[target]">User which connections will be loaded:</label>
         <input
           id="user[target]"
@@ -100,17 +99,14 @@ const Main = () => {
         >
           Start
         </button>
-      </div>
+      </Section>
       {processing && (
-        <div className="section">
+        <Section>
           <div>{targets.length} targets left</div>
           <div>Current target {currentTarget.login}</div>
-        </div>
+        </Section>
       )}
-      <div className="section">
-        <div className="sectionTitle">
-          {!!sourceUsername.length && `${sourceUsername}'s `}list of connections
-        </div>
+      <Section title="list of connections">
         {!following.length && !loading && 'yet empty...'}
         {!!following.length && (
           <button
@@ -140,7 +136,7 @@ const Main = () => {
             }}
           />
         ))}
-      </div>
+      </Section>
     </>
   );
 };
