@@ -9,7 +9,7 @@
   width: 100%;
   background-color: #fff;
 }
-.sectionTitle {
+.title {
   position: absolute;
   transform: translateY(-30px);
   text-align: center;
@@ -21,9 +21,9 @@
   white-space: nowrap;
   overflow-y: auto;
 }
-.sectionTitle:before {
+.title:before {
   content: '[';
 }
-.sectionTitle:after {
+.title:after {
   content: ']';
 }

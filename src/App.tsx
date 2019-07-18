@@ -5,17 +5,19 @@ import {
   Route,
 } from "react-router-dom";
 
-import Main from './containers/Main/Main';
 import Header from './components/Header/Header';
+import Menu from './containers/Menu/Menu';
+import Main from './containers/Main/Main';
 import Alert from './containers/Alert/Alert';
 
-import './App.css';
+import s from './App.module.css';
 
 function App() {
   return (
-    <div className="app">
-      <div className="container">
+    <div className={s.app}>
+      <div className={s.container}>
         <Header/>
+        <Menu/>
         <Router>
           <Switch>
             <Route path="/subscribe" component={Main}/>

@@ -5,14 +5,14 @@ import { observer } from 'mobx-react';
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
 
-import './Main.css';
+import s from './Main.module.css';
 
 const UserItem = ({ user, onClick, checked }: any) => {
   return (
-    <div className={cx('item', { unselected: !checked })} onClick={onClick}>
+    <div className={cx(s.item, { unselected: !checked })} onClick={onClick}>
       <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
       <img src={user.avatar_url} alt={user.login} />
-      <div className="name">
+      <div className={s.name}>
         <a
           href={`https://github.com/${user.login}`}
           onClick={e => e.stopPropagation()}
@@ -41,7 +41,6 @@ const Main = () => {
       currentTarget,
       loading,
       processing,
-      remainingRateLimit,
       page,
     },
   } = useBaseStore();
@@ -52,30 +51,6 @@ const Main = () => {
 
   return (
     <>
-      {!!remainingRateLimit && (
-        <Section title="rate limits">
-          <div>
-            available: {remainingRateLimit.remaining} out of {remainingRateLimit.limit} requests
-          </div>
-          <div>reset time: {remainingRateLimit.resetDate.toLocaleString()}</div>
-        </Section>
-      )}
-      <Section title="your credentials">
-        <label htmlFor="user[login]">Your github nickname:</label>
-        <input
-          id="user[login]"
-          type="text"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        ></input>
-        <label htmlFor="token">Your github access token (it will not be stored):</label>
-        <input
-          id="token"
-          type="text"
-          value={token}
-          onChange={e => setToken(e.target.value)}
-        ></input>
-      </Section>
       <Section title="user as source of connections">
         <label htmlFor="user[target]">User which connections will be loaded:</label>
         <input

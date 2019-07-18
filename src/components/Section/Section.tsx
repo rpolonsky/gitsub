@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import cx from 'classnames';
 
-import './Section.css';
+import s from './Section.module.css';
 
 type Props = {
   title?: string | ReactElement;
@@ -14,8 +14,8 @@ const Section = (props: Props) => {
   const { className, titleClassName, title, children } = props;
 
   return (
-    <div className={cx(className, 'section')}>
-      {title && <div className={cx(titleClassName, 'sectionTitle')}>{title}</div>}
+    <div className={cx(className, s.section)}>
+      {title && <div className={cx(titleClassName, s.title)}>{title}</div>}
       {children}
     </div>
   );
