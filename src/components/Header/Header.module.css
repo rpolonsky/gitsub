@@ -3,7 +3,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 536px;
   margin-bottom: 10px;
 
   text-transform: uppercase;
@@ -29,6 +29,7 @@
   .header {
     flex-direction: column;
     font-size: 30px;
+    width: 100%;
   }
   .social {
     align-self: flex-end;

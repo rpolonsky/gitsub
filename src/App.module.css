@@ -17,6 +17,10 @@ button:focus {
   outline: none;
 }
 
+a {
+  color: black;
+}
+
 button {
   cursor: pointer;
   background-color: #fff;
@@ -33,8 +37,8 @@ button {
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  width: 45%;
+  align-items: center;
+  width: 960px;
   padding: 20px;
 }
 

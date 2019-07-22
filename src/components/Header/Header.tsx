@@ -1,5 +1,4 @@
 import React from 'react';
-import { observer } from 'mobx-react';
 
 import github from '../../icons/github.png';
 import linkedin from '../../icons/linkedin.png';
@@ -25,4 +24,4 @@ const Header = () => {
   );
 };
 
-export default observer(Header);
+export default Header;
