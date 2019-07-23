@@ -50,7 +50,7 @@ const Main = () => {
   }, [following]);
 
   return (
-    <>
+    <div className={s.main}>
       <Section title="user as source of connections">
         <label htmlFor="user[target]">User which connections will be loaded:</label>
         <input
@@ -112,7 +112,7 @@ const Main = () => {
           />
         ))}
       </Section>
-    </>
+    </div>
   );
 };
 

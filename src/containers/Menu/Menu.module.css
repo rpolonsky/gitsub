@@ -1,0 +1,38 @@
+.menu {
+  flex: 1;
+  padding-right: 10px;
+  border-right: 1px solid black;
+}
+
+.button {
+  cursor: pointer;
+  text-transform: uppercase;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: underline;
+
+  transition: all 0.2s ease-out;
+}
+
+/* Desktop */
+@media only screen and (min-width: 480px) {
+  .button:not(.active):hover {
+    transform: translateX(5px);
+  }
+  .active {
+    padding-right: 20px;
+    border-right: 1px solid transparent;
+    transform: translateX(11px);
+  }
+}
+
+/* Mobile */
+@media only screen and (max-width: 480px) {
+  .menu {
+    padding: initial;
+    border: initial;
+  }
+}
