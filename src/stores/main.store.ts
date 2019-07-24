@@ -8,6 +8,7 @@ type RateLimit = {
 };
 
 interface Main {
+  isMenuOpen: boolean;
   following: any[];
   targets: any[];
   currentTarget: any;
@@ -38,10 +39,14 @@ class MainStore implements Main {
   @observable processing = false;
   @observable page = 1;
   @observable error = '';
+  @observable isMenuOpen = false;
 
   @action resetError = () => {
     this.error = '';
   };
+  @action toggleMenuState = () => {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
   @action getUserFollowingList = (targetUser: string, username: string, token: string) => {
     try {
       this.loading = true;

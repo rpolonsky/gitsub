@@ -24,6 +24,14 @@
 .social img {
   height: 30px;
 }
+.controls {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+}
+.mobileOnly {
+  display: none;
+}
 
 @media only screen and (max-width: 480px) {
   .header {
@@ -33,5 +41,18 @@
   }
   .social {
     align-self: flex-end;
+  }
+  .controls {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 100%;
+  }
+  .mobileOnly {
+    display: flex;
+    flex: 1;
+    align-items: center;
+  }
+  .menuButton {
+    margin-right: 15px;
   }
 }
