@@ -8,24 +8,26 @@ import Menu from './containers/Menu/Menu';
 import Main from './containers/Main/Main';
 import Alert from './containers/Alert/Alert';
 
+import { UNSUBSCRIBE, FOLLOWERS, ROOT } from './utils/routes';
+
 import s from './App.module.css';
 
 const App = () => {
   return (
     <div className={s.app}>
       <div className={s.container}>
-        <Header />
-        <Layout>
-          <Router>
+        <Router>
+          <Header />
+          <Layout>
             <Menu />
             <Switch>
-              <Route path="/unsubscribe" component={Main} />
-              <Route path="/followers" component={Main} />
-              <Route exact path="/" component={Main} />
+              <Route path={UNSUBSCRIBE} component={Main} />
+              <Route path={FOLLOWERS} component={Main} />
+              <Route exact path={ROOT} component={Main} />
             </Switch>
-          </Router>
-        </Layout>
-        <Alert />
+          </Layout>
+          <Alert />
+        </Router>
       </div>
     </div>
   );

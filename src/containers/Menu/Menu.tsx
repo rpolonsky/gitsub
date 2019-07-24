@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { useLocation, useHistory } from 'react-router-dom';
 import cx from 'classnames';
 
+import { ROOT, UNSUBSCRIBE, FOLLOWERS } from '../../utils/routes';
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
 
@@ -46,18 +47,18 @@ const Menu = () => {
           onChange={e => setToken(e.target.value)}
         ></input>
       </Section>
-      <Section onClick={() => push('/')} className={cx(s.button, { [s.active]: path === '/' })}>
+      <Section onClick={() => push(ROOT)} className={cx(s.button, { [s.active]: path === ROOT })}>
         Subscribe
       </Section>
       <Section
-        onClick={() => push('/unsubscribe')}
-        className={cx(s.button, { [s.active]: path === '/unsubscribe' })}
+        onClick={() => push(UNSUBSCRIBE)}
+        className={cx(s.button, { [s.active]: path === UNSUBSCRIBE })}
       >
         Unsubscribe
       </Section>
       <Section
-        onClick={() => push('/followers')}
-        className={cx(s.button, { [s.active]: path === '/followers' })}
+        onClick={() => push(FOLLOWERS)}
+        className={cx(s.button, { [s.active]: path === FOLLOWERS })}
       >
         My Followers List
       </Section>
