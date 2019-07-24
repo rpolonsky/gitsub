@@ -1,0 +1,10 @@
+.main {
+  width: 24px;
+  height: 24px;
+  background-size: cover;
+  cursor: pointer;
+  background-image: url('../../icons/menu.png');
+}
+.main.open {
+  background-image: url('../../icons/menu-close.png');
+}
