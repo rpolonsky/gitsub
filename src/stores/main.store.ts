@@ -46,7 +46,10 @@ class MainStore implements Main {
   };
   @action toggleMenuState = () => {
     this.isMenuOpen = !this.isMenuOpen;
-  }
+  };
+  @action setMenuState = (state: boolean) => {
+    this.isMenuOpen = state;
+  };
   @action getUserFollowingList = (targetUser: string, username: string, token: string) => {
     try {
       this.loading = true;

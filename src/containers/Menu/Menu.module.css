@@ -16,6 +16,9 @@
 
   transition: all 0.2s ease-out;
 }
+.heading {
+  display: none;
+}
 
 /* Desktop */
 @media only screen and (min-width: 480px) {
@@ -32,7 +35,34 @@
 /* Mobile */
 @media only screen and (max-width: 480px) {
   .menu {
-    padding: initial;
+    transform: translateX(-100%);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
     border: initial;
+    padding: 15px;
+    background-color: #fff;
+    transition: all 0.2s ease-out;
+
+    z-index: 1;
+  }
+  .open {
+    transform: translateX(0);
+  }
+  .heading {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 15px;
+
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .closeButton {
+    margin-right: 5px;
   }
 }

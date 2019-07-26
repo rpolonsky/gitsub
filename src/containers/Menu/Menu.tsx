@@ -4,12 +4,18 @@ import { useLocation, useHistory } from 'react-router-dom';
 import cx from 'classnames';
 
 import { ROOT, UNSUBSCRIBE, FOLLOWERS } from '../../utils/routes';
-import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
+
+import Section from '../../components/Section/Section';
+import MenuButton from '../../components/MenuButton/MenuButton';
 
 import s from './Menu.module.css';
 
 const Menu = () => {
+  const {
+    main: { setMenuState, isMenuOpen },
+  } = useBaseStore();
+
   const [username, setUsername] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const { pathname: path } = useLocation();
@@ -20,7 +26,11 @@ const Menu = () => {
   } = useBaseStore();
 
   return (
-    <div className={s.menu}>
+    <div className={cx(s.menu, { [s.open]: isMenuOpen })}>
+      <div className={s.heading} onClick={() => setMenuState(false)}>
+        <MenuButton open className={s.closeButton} />
+        CLOSE
+      </div>
       {!!remainingRateLimit && (
         <Section title="rate limits">
           <div>
@@ -47,17 +57,29 @@ const Menu = () => {
           onChange={e => setToken(e.target.value)}
         ></input>
       </Section>
-      <Section onClick={() => push(ROOT)} className={cx(s.button, { [s.active]: path === ROOT })}>
+      <Section
+        onClick={() => {
+          push(ROOT);
+          setMenuState(false);
+        }}
+        className={cx(s.button, { [s.active]: path === ROOT })}
+      >
         Subscribe
       </Section>
       <Section
-        onClick={() => push(UNSUBSCRIBE)}
+        onClick={() => {
+          push(UNSUBSCRIBE);
+          setMenuState(false);
+        }}
         className={cx(s.button, { [s.active]: path === UNSUBSCRIBE })}
       >
         Unsubscribe
       </Section>
       <Section
-        onClick={() => push(FOLLOWERS)}
+        onClick={() => {
+          push(FOLLOWERS);
+          setMenuState(false);
+        }}
         className={cx(s.button, { [s.active]: path === FOLLOWERS })}
       >
         My Followers List
