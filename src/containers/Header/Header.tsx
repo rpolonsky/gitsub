@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { TITLES } from '../../utils/routes';
 import { useBaseStore } from '../../stores';
 
-import MenuButton from '../MenuButton/MenuButton';
+import MenuButton from '../../components/MenuButton/MenuButton';
 
 import github from '../../icons/github.png';
 import linkedin from '../../icons/linkedin.png';

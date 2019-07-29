@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
 
-import s from './Main.module.css';
+import s from './Subscribe.module.css';
 
 const UserItem = ({ user, onClick, checked }: any) => {
   return (
@@ -27,13 +27,13 @@ const UserItem = ({ user, onClick, checked }: any) => {
   );
 };
 
-const Main = () => {
+const Subscribe = () => {
   const [followList, setFollowList] = useState<any[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const {
-    main: {
+    subscribe: {
       getUserFollowingList,
       followUsers,
       following,
@@ -93,7 +93,7 @@ const Main = () => {
           </button>
         )}
 
-        {following.map((user: any, index) => (
+        {following.map((user: any, index: number) => (
           <UserItem
             key={user.login}
             user={user}
@@ -116,4 +116,4 @@ const Main = () => {
   );
 };
 
-export default observer(Main);
+export default observer(Subscribe);

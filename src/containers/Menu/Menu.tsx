@@ -14,16 +14,13 @@ import s from './Menu.module.css';
 const Menu = () => {
   const {
     main: { setMenuState, isMenuOpen },
+    subscribe: { remainingRateLimit },
   } = useBaseStore();
 
   const [username, setUsername] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const { pathname: path } = useLocation();
   const { push } = useHistory();
-
-  const {
-    main: { remainingRateLimit },
-  } = useBaseStore();
 
   return (
     <div className={cx(s.menu, { [s.open]: isMenuOpen })}>
