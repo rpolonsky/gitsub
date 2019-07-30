@@ -1,7 +1,3 @@
-.main {
-  flex: 2;
-  margin-left: 10px;
-}
 .item {
   display: flex;
   flex-direction: row;
@@ -22,10 +18,4 @@
 }
 .item.unselected {
   opacity: 0.3;
-}
-
-@media only screen and (max-width: 480px) {
-  .main {
-    margin: initial;
-  }
 }

@@ -1,13 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import Layout from './components/Layout/Layout';
-
 import Header from './containers/Header/Header';
 import Menu from './containers/Menu/Menu';
-import Unsubscribe from './containers/Subscribe/Subscribe';
+import Unsubscribe from './containers/Unsubscribe/Unsubscribe';
 import Subscribe from './containers/Subscribe/Subscribe';
-import Followers from './containers/Subscribe/Subscribe';
+import Followers from './containers/Followers/Followers';
 import Alert from './containers/Alert/Alert';
 
 import { UNSUBSCRIBE, FOLLOWERS, ROOT } from './utils/routes';
@@ -20,14 +18,16 @@ const App = () => {
       <div className={s.container}>
         <Router>
           <Header />
-          <Layout>
+          <div className={s.page}>
             <Menu />
-            <Switch>
-              <Route path={UNSUBSCRIBE} component={Unsubscribe} />
-              <Route path={FOLLOWERS} component={Followers} />
-              <Route exact path={ROOT} component={Subscribe} />
-            </Switch>
-          </Layout>
+            <div className={s.content}>
+              <Switch>
+                <Route path={UNSUBSCRIBE} component={Unsubscribe} />
+                <Route path={FOLLOWERS} component={Followers} />
+                <Route exact path={ROOT} component={Subscribe} />
+              </Switch>
+            </div>
+          </div>
           <Alert />
         </Router>
       </div>

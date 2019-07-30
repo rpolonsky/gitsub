@@ -42,9 +42,28 @@ button {
   padding: 20px;
 }
 
+.page {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.content {
+  flex: 2;
+  margin-left: 10px;
+}
+
 @media only screen and (max-width: 480px) {
   .container {
     width: 100%;
     padding: 15px;
+  }
+
+  .page {
+    flex-direction: column;
+  }
+
+  .content {
+    margin: initial;
   }
 }

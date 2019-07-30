@@ -1,31 +1,10 @@
-import cx from 'classnames';
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 
+import UserItem from './components/UserItem';
+
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
-
-import s from './Subscribe.module.css';
-
-const UserItem = ({ user, onClick, checked }: any) => {
-  return (
-    <div className={cx(s.item, { unselected: !checked })} onClick={onClick}>
-      <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
-      <img src={user.avatar_url} alt={user.login} />
-      <div className={s.name}>
-        <a
-          href={`https://github.com/${user.login}`}
-          onClick={e => e.stopPropagation()}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {user.login}
-        </a>
-      </div>
-      {user.processed && 'processed'}
-    </div>
-  );
-};
 
 const Subscribe = () => {
   const [followList, setFollowList] = useState<any[]>([]);
@@ -50,7 +29,7 @@ const Subscribe = () => {
   }, [following]);
 
   return (
-    <div className={s.main}>
+    <>
       <Section title="user as source of connections">
         <label htmlFor="user[target]">User which connections will be loaded:</label>
         <input
@@ -112,7 +91,7 @@ const Subscribe = () => {
           />
         ))}
       </Section>
-    </div>
+    </>
   );
 };
 
