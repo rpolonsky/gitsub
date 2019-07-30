@@ -9,8 +9,6 @@ import { useBaseStore } from '../../stores';
 const Subscribe = () => {
   const [followList, setFollowList] = useState<any[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
-  const [token, setToken] = useState<string>('');
   const {
     subscribe: {
       getUserFollowingList,
@@ -22,6 +20,7 @@ const Subscribe = () => {
       processing,
       page,
     },
+    main: { username, token },
   } = useBaseStore();
 
   useEffect(() => {

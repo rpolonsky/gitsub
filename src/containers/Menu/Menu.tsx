@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react';
 import { useLocation, useHistory } from 'react-router-dom';
 import cx from 'classnames';
@@ -13,12 +13,10 @@ import s from './Menu.module.css';
 
 const Menu = () => {
   const {
-    main: { setMenuState, isMenuOpen },
+    main: { setMenuState, setUsername, setToken, isMenuOpen, username, token },
     subscribe: { remainingRateLimit },
   } = useBaseStore();
 
-  const [username, setUsername] = useState<string>('');
-  const [token, setToken] = useState<string>('');
   const { pathname: path } = useLocation();
   const { push } = useHistory();
 
