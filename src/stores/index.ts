@@ -1,10 +1,7 @@
 import { createContext, useContext } from 'react';
-import { configure } from "mobx"
 
 import Main from './main.store';
 import Subscribe from './subscribe.store';
-
-configure({ enforceActions: "always" })
 
 const main = new Main();
 
