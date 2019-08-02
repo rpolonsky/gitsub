@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 
-import UserItem from './components/UserItem';
-
+import UserItem from '../../components/UserItem/UserItem';
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
 
@@ -30,7 +29,7 @@ const Subscribe = () => {
   return (
     <>
       <Section title="user as source of connections">
-        <label htmlFor="user[target]">User which connections will be loaded:</label>
+        <label htmlFor="user[target]">User whose connections will be loaded:</label>
         <input
           id="user[target]"
           type="text"
@@ -50,7 +49,7 @@ const Subscribe = () => {
           }}
           disabled={loading}
         >
-          Start
+          Load connections
         </button>
       </Section>
       {processing && (
@@ -73,6 +72,7 @@ const Subscribe = () => {
 
         {following.map((user: any, index: number) => (
           <UserItem
+            withCheckbox
             key={user.login}
             user={user}
             checked={followList.findIndex((u: any) => u.login === user.login) !== -1}

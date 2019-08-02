@@ -5,14 +5,17 @@ import s from './UserItem.module.css';
 
 type Props = {
   user: any;
-  onClick: VoidFunction;
-  checked: boolean;
+  onClick?: VoidFunction;
+  checked?: boolean;
+  withCheckbox?: boolean;
 };
 
-const UserItem = ({ user, onClick, checked }: Props) => {
+const UserItem = ({ user, onClick, checked, withCheckbox = false }: Props) => {
   return (
-    <div className={cx(s.item, { unselected: !checked })} onClick={onClick}>
-      <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
+    <div className={cx(s.item, { unchecked: !checked })} onClick={onClick}>
+      {withCheckbox && (
+        <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
+      )}
       <img src={user.avatar_url} alt={user.login} />
       <div className={s.name}>
         <a

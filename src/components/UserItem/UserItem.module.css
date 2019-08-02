@@ -16,6 +16,6 @@
   flex: 1;
   padding: 10px;
 }
-.item.unselected {
+.item.unchecked {
   opacity: 0.3;
 }
