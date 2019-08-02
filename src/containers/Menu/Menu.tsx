@@ -77,7 +77,7 @@ const Menu = () => {
         }}
         className={cx(s.button, { [s.active]: path === FOLLOWERS })}
       >
-        My Followers List
+        Followers List
       </Section>
     </div>
   );

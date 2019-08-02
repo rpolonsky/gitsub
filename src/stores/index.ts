@@ -2,12 +2,14 @@ import { createContext, useContext } from 'react';
 
 import Main from './main.store';
 import Subscribe from './subscribe.store';
+import Followers from './followers.store';
 
 const main = new Main();
 
 const BaseStore = {
   main,
   subscribe: new Subscribe(main),
+  followers: new Followers(main),
 };
 
 export const rootContext = createContext(BaseStore);

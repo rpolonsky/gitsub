@@ -7,5 +7,5 @@ export const TITLES: { [key: string]: string } = {
   [ROOT]: 'Subscribe',
   [SUBSCRIBE]: 'Subscribe',
   [UNSUBSCRIBE]: 'Unsubscribe',
-  [FOLLOWERS]: 'My followers',
+  [FOLLOWERS]: 'Followers',
 };
