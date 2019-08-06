@@ -8,11 +8,12 @@ type Props = {
   onClick?: VoidFunction;
   checked?: boolean;
   withCheckbox?: boolean;
+  className?: string;
 };
 
-const UserItem = ({ user, onClick, checked, withCheckbox = false }: Props) => {
+const UserItem = ({ user, onClick, className, checked, withCheckbox = false }: Props) => {
   return (
-    <div className={cx(s.item, { unchecked: !checked })} onClick={onClick}>
+    <div className={cx(s.item, className, { unchecked: !checked })} onClick={onClick}>
       {withCheckbox && (
         <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
       )}

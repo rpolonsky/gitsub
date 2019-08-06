@@ -3,12 +3,6 @@ import axios from 'axios';
 
 import MainStore from './main.store';
 
-type RateLimit = {
-  limit: string;
-  remaining: string;
-  resetDate: Date;
-};
-
 interface Subscribe {
   following: any[];
   targets: any[];
@@ -16,7 +10,6 @@ interface Subscribe {
   page: number;
   loading: boolean;
   processing: boolean;
-  remainingRateLimit?: RateLimit;
 }
 
 const TIMEOUT = 0;
@@ -24,19 +17,12 @@ const MAX_PAGE_LIMIT = 0;
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
 const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 
-const getRateLimit = (headers: { [key: string]: string }): RateLimit => ({
-  limit: headers['x-ratelimit-limit'],
-  remaining: headers['x-ratelimit-remaining'],
-  resetDate: new Date(+headers['x-ratelimit-reset'] * 1000),
-});
-
 class SubscribeStore implements Subscribe {
   private main: MainStore;
 
   @observable following: any[] = [];
   @observable targets: any[] = [];
   @observable currentTarget: any = null;
-  @observable remainingRateLimit: RateLimit | undefined;
   @observable loading = false;
   @observable processing = false;
   @observable page = 1;
@@ -69,7 +55,7 @@ class SubscribeStore implements Subscribe {
           this.following.push(...result.data);
         }
 
-        this.remainingRateLimit = getRateLimit(result.headers);
+        this.main.setRemainingRateLimit(result.headers);
 
         if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
           this.page++;
@@ -110,7 +96,7 @@ class SubscribeStore implements Subscribe {
           },
         );
 
-        this.remainingRateLimit = getRateLimit(headers);
+        this.main.setRemainingRateLimit(headers);
         this.currentTarget.processed = true;
 
         if (this.targets.length) {

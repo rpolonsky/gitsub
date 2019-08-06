@@ -47,11 +47,11 @@ const Followers = () => {
         </button>
       </Section>
 
-      <Section title="list of followers">
+      <Section title={`list of ${followers.length || ''} followers`}>
         {!followers.length && !loading && 'yet empty...'}
 
         {followers.map((user: any, index: number) => (
-          <UserItem key={user.login} user={user} />
+          <UserItem key={user.login} user={user} className={s.followerItem} />
         ))}
       </Section>
     </>

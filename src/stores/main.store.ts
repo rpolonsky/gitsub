@@ -5,13 +5,27 @@ interface Main {
   isMenuOpen: boolean;
   username: string;
   token: string;
+  remainingRateLimit?: RateLimit;
 }
+
+type RateLimit = {
+  limit: string;
+  remaining: string;
+  resetDate: Date;
+};
+
+const getRateLimit = (headers: { [key: string]: string }): RateLimit => ({
+  limit: headers['x-ratelimit-limit'],
+  remaining: headers['x-ratelimit-remaining'],
+  resetDate: new Date(+headers['x-ratelimit-reset'] * 1000),
+});
 
 class MainStore implements Main {
   @observable error = '';
   @observable isMenuOpen = false;
   @observable username = '';
   @observable token = '';
+  @observable remainingRateLimit: RateLimit | undefined;
 
   /* error */
   @action resetError = () => {
@@ -35,6 +49,11 @@ class MainStore implements Main {
   };
   @action setToken = (token: string) => {
     this.token = token;
+  };
+
+  /* rate limits */
+  @action setRemainingRateLimit = (headers: { [key: string]: string }) => {
+    this.remainingRateLimit = getRateLimit(headers);
   };
 }
 

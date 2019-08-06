@@ -48,7 +48,7 @@ class FollowersStore implements Followers {
           this.followers.push(...result.data);
         }
 
-        // this.main.setRemainingRateLimit(result.headers);
+        this.main.setRemainingRateLimit(result.headers);
 
         if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
           this.page++;

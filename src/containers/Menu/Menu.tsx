@@ -14,7 +14,7 @@ import s from './Menu.module.css';
 const Menu = () => {
   const {
     main: { setMenuState, setUsername, setToken, isMenuOpen, username, token },
-    subscribe: { remainingRateLimit },
+    main: { remainingRateLimit },
   } = useBaseStore();
 
   const { pathname: path } = useLocation();
