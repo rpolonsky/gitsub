@@ -1,10 +1,12 @@
 import React from 'react';
 import cx from 'classnames';
 
+import { UserInfo } from '../../types';
+
 import s from './UserItem.module.css';
 
 type Props = {
-  user: any;
+  user: UserInfo & { processed?: boolean };
   onClick?: VoidFunction;
   checked?: boolean;
   withCheckbox?: boolean;

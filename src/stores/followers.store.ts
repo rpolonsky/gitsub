@@ -7,32 +7,11 @@ import localforage from 'localforage';
 import { UserInfo, FollowersDiff, FollowersSnapshot } from '../types';
 import MainStore from './main.store';
 
-const FOLLOWERS_MOCK = [
-  {
-    login: 'testLogin',
-    id: 7777777,
-    node_id: '121212121212=',
-    avatar_url: 'https://avatars1.githubusercontent.com/u/7777777?v=4',
-    gravatar_id: '',
-    url: 'https://api.github.com/users/testLogin',
-    html_url: 'https://github.com/testLogin',
-    followers_url: 'https://api.github.com/users/testLogin/followers',
-    following_url: 'https://api.github.com/users/testLogin/following{/other_user}',
-    gists_url: 'https://api.github.com/users/testLogin/gists{/gist_id}',
-    starred_url: 'https://api.github.com/users/testLogin/starred{/owner}{/repo}',
-    subscriptions_url: 'https://api.github.com/users/testLogin/subscriptions',
-    organizations_url: 'https://api.github.com/users/testLogin/orgs',
-    repos_url: 'https://api.github.com/users/testLogin/repos',
-    events_url: 'https://api.github.com/users/testLogin/events{/privacy}',
-    received_events_url: 'https://api.github.com/users/testLogin/received_events',
-    type: 'User',
-    site_admin: false,
-  },
-];
 interface Followers {
   followers: UserInfo[];
   page: number;
   loading: boolean;
+  saving: boolean;
 }
 
 const TIMEOUT = 0;
@@ -42,8 +21,9 @@ const GH_FOLLOWERS_URL_TEMPLATE = '/api/gh/users/%USERNAME%/followers?page=%PAGE
 class FollowersStore implements Followers {
   private main: MainStore;
 
-  @observable followers: UserInfo[] = FOLLOWERS_MOCK;
+  @observable followers: UserInfo[] = [];
   @observable loading = false;
+  @observable saving = false;
   @observable page = 1;
 
   constructor(mainStore: MainStore) {
@@ -51,12 +31,12 @@ class FollowersStore implements Followers {
   }
 
   @action getUserFollowersList = (targetUser: string, username: string, token: string) => {
-    try {
-      this.loading = true;
-      this.page = 1;
-      this.followers = [];
+    this.loading = true;
+    this.page = 1;
+    this.followers = [];
 
-      const recursive = async () => {
+    const recursive = async () => {
+      try {
         const result = await axios.get(
           GH_FOLLOWERS_URL_TEMPLATE.replace('%USERNAME%', targetUser).replace(
             '%PAGE%',
@@ -83,24 +63,32 @@ class FollowersStore implements Followers {
         } else {
           this.loading = false;
         }
-      };
+      } catch (error) {
+        console.error('error', error);
+        this.main.setError(error.message ?? error);
+        this.followers = [];
+        this.loading = false;
+      }
+    };
 
-      recursive();
-    } catch (error) {
-      console.error('error', error);
-      this.main.setError(error.message ?? error);
-      this.followers = [];
-      this.loading = false;
-    }
+    recursive();
   };
 
   @action saveFollowersList = async (username: string) => {
-    const key = `followers_${username}`;
+    try {
+      this.saving = true;
+      const key = `followers_${username}`;
 
-    let dataToStore = await this.getStoredFollowersList(username);
-    dataToStore.push({ date: new Date(), followers: this.followers });
+      let dataToStore = await this.getStoredFollowersList(username);
+      dataToStore.push({ date: new Date(), followers: this.followers });
 
-    await localforage.setItem(key, JSON.stringify(dataToStore));
+      await localforage.setItem(key, JSON.stringify(dataToStore));
+    } catch (error) {
+      console.error('error', error);
+      this.main.setError(error.message ?? error);
+    } finally {
+      this.saving = false;
+    }
   };
 
   @action cleanFollowersList = () => {
@@ -114,7 +102,7 @@ class FollowersStore implements Followers {
     if (!username.length) {
       return null;
     }
-    
+
     const storedData = await this.getStoredFollowersList(username);
 
     if (!storedData.length || (index && index >= storedData.length)) {
@@ -128,7 +116,7 @@ class FollowersStore implements Followers {
     return {
       lost: diff(prevFollowers, this.followers, i => i.id),
       gained: diff(this.followers, prevFollowers, i => i.id),
-      kept: intersect(this.followers, prevFollowers),
+      kept: intersect(this.followers, prevFollowers, i => i.id),
     };
   };
 

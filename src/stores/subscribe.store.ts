@@ -32,12 +32,12 @@ class SubscribeStore implements Subscribe {
   }
 
   @action getUserFollowingList = (targetUser: string, username: string, token: string) => {
-    try {
-      this.loading = true;
-      this.page = 1;
-      this.following = [];
+    this.loading = true;
+    this.page = 1;
+    this.following = [];
 
-      const recursive = async () => {
+    const recursive = async () => {
+      try {
         const result = await axios.get(
           GH_FOLLOWING_URL_TEMPLATE.replace('%USERNAME%', targetUser).replace(
             '%PAGE%',
@@ -63,15 +63,15 @@ class SubscribeStore implements Subscribe {
         } else {
           this.loading = false;
         }
-      };
+      } catch (error) {
+        console.error('error', error);
+        this.main.setError(error.message ?? error);
+        this.following = [];
+        this.loading = false;
+      }
+    };
 
-      recursive();
-    } catch (error) {
-      console.error('error', error);
-      this.main.setError(error.message ?? error);
-      this.following = [];
-      this.loading = false;
-    }
+    recursive();
   };
   @action followUsers = (users: any[], username: string, token: string) => {
     this.processing = true;
