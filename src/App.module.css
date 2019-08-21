@@ -27,6 +27,15 @@ button {
   border: 1px solid #aaa;
   border-bottom: 1px solid #777;
   border-right: 1px solid #777;
+  padding: 5px;
+  transition: all 0.2s ease-out;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button:not(:disabled):hover {
+  background-color: rgb(245, 245, 245);
 }
 
 .app {
