@@ -3,7 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 
 import Section from '../../components/Section/Section';
-import UserItem from '../../components/UserItem/UserItem';
+
+import FollowersList from './components/FollowersList';
+import FollowersListChanges from './components/FollowersListChanges';
 
 import { useBaseStore } from '../../stores';
 import { FollowersDiff } from '../../types';
@@ -16,6 +18,7 @@ const Followers = () => {
     followers: {
       followers,
       loading,
+      saving,
       getUserFollowersList,
       saveFollowersList,
       cleanFollowersList,
@@ -28,15 +31,18 @@ const Followers = () => {
 
   useEffect(() => {
     setTargetUsername(username);
-    cleanFollowersList();
   }, [username]);
 
   useEffect(() => {
-    (async () => setFollowersDiff(await getFollowersListDiff(targetUsername)))();
-  }, [followers]);
+    cleanFollowersList();
+  }, [targetUsername]);
 
-  console.log('followersDiff', followersDiff); // TODO Remove
-  
+  useEffect(() => {
+    if (!saving) {
+      (async () => setFollowersDiff(await getFollowersListDiff(targetUsername)))();
+    }
+  }, [followers, targetUsername, saving]);
+
   return (
     <>
       <Section title="whose followers to load">
@@ -53,25 +59,29 @@ const Followers = () => {
             }
           }}
         ></input>
-        <br />
-        <button
-          onClick={() => {
-            getUserFollowersList(targetUsername, username, token);
-          }}
-          disabled={loading}
-        >
-          Load followers
-        </button>
-        <button onClick={() => saveFollowersList(username)}>Save followers list snapshot</button>
+        <div className={s.row}>
+          <button
+            onClick={() => {
+              getUserFollowersList(targetUsername, username, token);
+            }}
+            disabled={loading || !targetUsername.length}
+          >
+            Load followers
+          </button>
+          <button
+            disabled={!followers.length || loading || !targetUsername.length}
+            onClick={() => saveFollowersList(targetUsername)}
+          >
+            {saving ? 'Saving followers...' : 'Save followers snapshot'}
+          </button>
+        </div>
       </Section>
 
-      <Section title={`list of ${followers.length || ''} followers`}>
-        {!followers.length && !loading && 'yet empty...'}
+      {!!followers.length && !loading && !saving && (
+        <FollowersListChanges followersDiff={followersDiff} targetUsername={targetUsername} />
+      )}
 
-        {followers.map((user: any, index: number) => (
-          <UserItem key={user.login} user={user} className={s.followerItem} />
-        ))}
-      </Section>
+      <FollowersList followers={followers} loading={loading} />
     </>
   );
 };
