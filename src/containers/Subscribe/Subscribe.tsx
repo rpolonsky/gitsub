@@ -26,6 +26,10 @@ const Subscribe = () => {
     setFollowList(following);
   }, [following]);
 
+  useEffect(() => {
+    gtag('event', 'impression', { event_category: 'subscribe' });
+  }, []);
+
   return (
     <>
       <Section title="user as source of connections">
@@ -41,11 +45,16 @@ const Subscribe = () => {
               getUserFollowingList(sourceUsername, username, token);
             }
           }}
+          onFocus={() => gtag('event', 'user-input-focus', { event_category: 'subscribe' })}
         ></input>
         <br />
         <button
           onClick={() => {
             getUserFollowingList(sourceUsername, username, token);
+            gtag('event', 'load-connections', {
+              event_category: 'subscribe',
+              event_label: sourceUsername,
+            });
           }}
           disabled={loading}
         >
@@ -64,6 +73,7 @@ const Subscribe = () => {
           <button
             onClick={() => {
               followUsers(followList, username, token);
+              gtag('event', 'follow-users', { event_category: 'subscribe' });
             }}
           >
             {loading ? `Loading page #${page}...` : `Follow ${followList.length} users`}

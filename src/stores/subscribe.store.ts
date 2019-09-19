@@ -95,6 +95,10 @@ class SubscribeStore implements Subscribe {
             },
           },
         );
+        gtag('event', 'follow-user', {
+          event_category: 'subscribe',
+          event_value: this.currentTarget.login,
+        });
 
         this.main.setRemainingRateLimit(headers);
         this.currentTarget.processed = true;
