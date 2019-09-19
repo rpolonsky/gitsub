@@ -36,7 +36,12 @@ const FollowersListChanges = ({ followersDiff, targetUsername }: Props) => {
   return (
     <Section title="changes in followers list">
       {hasChanges && (
-        <button onClick={() => setShowChanges(!showChanges)}>
+        <button
+          onClick={() => {
+            setShowChanges(!showChanges);
+            gtag('event', 'show-changes', { event_category: 'followers' });
+          }}
+        >
           {!showChanges ? 'Show changes since last snapshot' : 'Hide changes'}
         </button>
       )}

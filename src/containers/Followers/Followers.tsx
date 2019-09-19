@@ -43,6 +43,10 @@ const Followers = () => {
     }
   }, [followers, targetUsername, saving]);
 
+  useEffect(() => {
+    gtag('event', 'impression', { event_category: 'followers' });
+  }, []);
+
   return (
     <>
       <Section title="whose followers to load">
@@ -58,11 +62,16 @@ const Followers = () => {
               getUserFollowersList(targetUsername, username, token);
             }
           }}
+          onFocus={() => gtag('event', 'user-input-focus', { event_category: 'followers' })}
         ></input>
         <div className={s.row}>
           <button
             onClick={() => {
               getUserFollowersList(targetUsername, username, token);
+              gtag('event', 'load-followers', {
+                event_category: 'followers',
+                event_label: targetUsername,
+              });
             }}
             disabled={loading || !targetUsername.length}
           >
@@ -70,7 +79,13 @@ const Followers = () => {
           </button>
           <button
             disabled={!followers.length || loading || !targetUsername.length}
-            onClick={() => saveFollowersList(targetUsername)}
+            onClick={() => {
+              saveFollowersList(targetUsername);
+              gtag('event', 'save-followers', {
+                event_category: 'followers',
+                event_label: targetUsername,
+              });
+            }}
           >
             {saving ? 'Saving followers...' : 'Save followers snapshot'}
           </button>

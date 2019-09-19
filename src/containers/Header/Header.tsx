@@ -29,10 +29,18 @@ const Header = () => {
           follow me:
           <div className={s.icons}>
             <a href="https://github.com/rpolonsky">
-              <img src={github} alt="github logo" />
+              <img
+                src={github}
+                alt="github logo"
+                onClick={() => gtag('event', 'goto-github', { event_category: 'header' })}
+              />
             </a>
             <a href="https://linkedin.com/in/rvpolonsky">
-              <img src={linkedin} alt="linkedin logo" />
+              <img
+                src={linkedin}
+                alt="linkedin logo"
+                onClick={() => gtag('event', 'goto-linkedin', { event_category: 'header' })}
+              />
             </a>
           </div>
         </div>

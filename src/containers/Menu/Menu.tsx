@@ -41,6 +41,9 @@ const Menu = () => {
           type="text"
           value={username}
           onChange={e => setUsername(e.target.value)}
+          onFocus={() => {
+            gtag('event', 'user-input-focus', { event_category: 'menu' });
+          }}
         ></input>
         <label htmlFor="token">
           Your github access token <br /> (it will not be stored):
@@ -50,6 +53,9 @@ const Menu = () => {
           type="text"
           value={token}
           onChange={e => setToken(e.target.value)}
+          onFocus={() => {
+            gtag('event', 'token-input-focus', { event_category: 'menu' });
+          }}
         ></input>
       </Section>
       <Section
