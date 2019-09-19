@@ -38,8 +38,10 @@ const FollowersListChanges = ({ followersDiff, targetUsername }: Props) => {
       {hasChanges && (
         <button
           onClick={() => {
+            if (!showChanges) {
+              gtag('event', 'show-changes', { event_category: 'followers' });
+            }
             setShowChanges(!showChanges);
-            gtag('event', 'show-changes', { event_category: 'followers' });
           }}
         >
           {!showChanges ? 'Show changes since last snapshot' : 'Hide changes'}
