@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import Header from './containers/Header/Header';
+import Footer from './containers/Footer/Footer';
 import Menu from './containers/Menu/Menu';
 import Unsubscribe from './containers/Unsubscribe/Unsubscribe';
 import Subscribe from './containers/Subscribe/Subscribe';
@@ -31,6 +32,7 @@ const App = () => {
           <Alert />
         </Router>
       </div>
+      <Footer />
     </div>
   );
 };

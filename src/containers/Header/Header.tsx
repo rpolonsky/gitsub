@@ -18,7 +18,7 @@ const Header = () => {
   const { pathname: path } = useLocation();
 
   return (
-    <div className={s.header}>
+    <header className={s.header}>
       GitHub Subscriber
       <div className={s.controls}>
         <div className={s.mobileOnly}>
@@ -45,7 +45,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
