@@ -67,7 +67,7 @@ const Menu = () => {
       >
         Subscribe
       </Section>
-      {/* <Section
+      <Section
         onClick={() => {
           push(UNSUBSCRIBE);
           setMenuState(false);
@@ -75,7 +75,7 @@ const Menu = () => {
         className={cx(s.button, { [s.active]: path === UNSUBSCRIBE })}
       >
         Unsubscribe
-      </Section> */}
+      </Section>
       <Section
         onClick={() => {
           push(FOLLOWERS);
