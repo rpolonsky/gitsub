@@ -13,6 +13,7 @@ import s from './Unsubscribe.module.css';
 
 const Unsubscribe = () => {
   const [unfollowList, setUnfollowList] = useState<any[]>([]);
+  const [pageLimit, setPageLimit] = useState<string>('');
   const [selectNotFollowers, setSelectNotFollowers] = useState<boolean>(false);
   const [selectNotMuchFollowed, setSelectNotMuchFollowed] = useState<boolean>(false);
 
@@ -75,7 +76,7 @@ const Unsubscribe = () => {
         <div className={s.row}>
           <button
             onClick={() => {
-              subscribe.getUserFollowingList(username, username, token);
+              subscribe.getUserFollowingList(username, username, token, +pageLimit);
               gtag('event', 'load-my-connections', {
                 event_category: 'unsubscribe',
                 event_label: username,
@@ -83,8 +84,24 @@ const Unsubscribe = () => {
             }}
             disabled={subscribe.loading || noCredentials}
           >
-            Load my connections
+            {pageLimit ? `Load ${pageLimit} pages` : 'Load all my connections'}
           </button>
+          <div className={s.inputCol}>
+            <label htmlFor="pageLimit">Number of pages:</label>
+            <input
+              id="pageLimit"
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={pageLimit}
+              onChange={e => {
+                setPageLimit(e.target.value);
+              }}
+              onFocus={() => {
+                gtag('event', 'pages-num-focus', { event_category: 'unsubscribe' });
+              }}
+            ></input>
+          </div>
         </div>
       </Section>
       {readyToProcess && (

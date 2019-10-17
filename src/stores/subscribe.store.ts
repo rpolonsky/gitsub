@@ -31,7 +31,12 @@ class SubscribeStore implements Subscribe {
     this.main = mainStore;
   }
 
-  @action getUserFollowingList = (targetUser: string, username: string, token: string) => {
+  @action getUserFollowingList = (
+    targetUser: string,
+    username: string,
+    token: string,
+    pageLimit = MAX_PAGE_LIMIT,
+  ) => {
     this.loading = true;
     this.page = 1;
     this.following = [];
@@ -57,7 +62,7 @@ class SubscribeStore implements Subscribe {
 
         this.main.setRemainingRateLimit(result.headers);
 
-        if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
+        if (result?.data?.length && (!pageLimit || this.page < pageLimit)) {
           this.page++;
           setTimeout(() => recursive(), TIMEOUT);
         } else {

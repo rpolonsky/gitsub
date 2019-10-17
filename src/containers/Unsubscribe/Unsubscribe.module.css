@@ -1,5 +1,15 @@
 .row {
   display: flex;
   width: 100%;
+  align-items: center;
   margin-top: 10px;
+}
+.row * {
+  flex: 1;
+}
+.inputCol {
+  padding-left: 5px;
+}
+.inputCol input {
+  width: 20%;
 }
