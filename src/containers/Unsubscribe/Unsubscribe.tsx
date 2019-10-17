@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
+import differenceBy from 'lodash/differenceBy';
 
 import UserItem from '../../components/UserItem/UserItem';
 import Section from '../../components/Section/Section';
 
+import { UserInfo } from '../../types';
 import { useBaseStore } from '../../stores';
 
 import s from './Unsubscribe.module.css';
@@ -27,8 +29,19 @@ const Unsubscribe = () => {
 
   /* update local list of users to unfollow */
   useEffect(() => {
-    setUnfollowList(subscribe.following);
-  }, [subscribe.following]);
+    if (followers.loading) {
+      return;
+    }
+    let unfollowList = [...subscribe.following];
+    if (selectNotFollowers && followers.followers.length && !followers.loading) {
+      unfollowList = differenceBy(
+        subscribe.following,
+        followers.followers,
+        (user: UserInfo) => user.login,
+      );
+    }
+    setUnfollowList(unfollowList);
+  }, [subscribe.following.length, followers.followers.length, followers.loading]);
 
   /* load/update followers list */
   useEffect(() => {
