@@ -4,6 +4,7 @@ import Main from './main.store';
 import Unsubscribe from './unsubscribe.store';
 import Subscribe from './subscribe.store';
 import Followers from './followers.store';
+import Users from './users.store';
 
 const main = new Main();
 
@@ -12,6 +13,7 @@ const BaseStore = {
   subscribe: new Subscribe(main),
   unsubscribe: new Unsubscribe(main),
   followers: new Followers(main),
+  users: new Users(main),
 };
 
 export const rootContext = createContext(BaseStore);

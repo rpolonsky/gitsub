@@ -19,6 +19,8 @@ export type UserInfo = {
   site_admin: boolean;
 };
 
+export type UserExtendedInfo = UserInfo & {}
+
 export type FollowersSnapshot = {
   date: Date;
   followers: UserInfo[];
