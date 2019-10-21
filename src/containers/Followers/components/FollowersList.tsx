@@ -18,7 +18,7 @@ const FollowersList = ({ followers, loading }: Props) => {
       {!followers.length && !loading && 'yet empty...'}
       {loading && 'loading...'}
 
-      {followers.map((user: any) => (
+      {followers.map((user: UserInfo) => (
         <UserItem key={user.login} user={user} className={s.followerItem} />
       ))}
     </Section>

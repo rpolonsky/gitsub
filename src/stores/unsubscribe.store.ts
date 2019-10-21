@@ -2,10 +2,11 @@ import { observable, action } from 'mobx';
 import axios from 'axios';
 
 import MainStore from './main.store';
+import { UserInfo } from '../types';
 
 interface Unsubscribe {
-  targets: any[];
-  currentTarget: any;
+  targets: UserInfo[];
+  currentTarget?: UserInfo;
   page: number;
   loading: boolean;
   processing: boolean;
@@ -18,8 +19,8 @@ const GH_UNFOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 class UnsubscribeStore implements Unsubscribe {
   private main: MainStore;
 
-  @observable targets: any[] = [];
-  @observable currentTarget: any = null;
+  @observable targets: UserInfo[] = [];
+  @observable currentTarget?: UserInfo = undefined;
   @observable loading = false;
   @observable processing = false;
   @observable page = 1;
@@ -28,7 +29,7 @@ class UnsubscribeStore implements Unsubscribe {
     this.main = mainStore;
   }
 
-  @action unfollowUsers = (users: any[], username: string, token: string) => {
+  @action unfollowUsers = (users: UserInfo[], username: string, token: string) => {
     this.processing = true;
     this.targets = [...users];
 

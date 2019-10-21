@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import UserItem from '../../components/UserItem/UserItem';
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
+import { UserInfo } from '../../types';
 
 const Subscribe = () => {
   const [followList, setFollowList] = useState<any[]>([]);
@@ -61,7 +62,7 @@ const Subscribe = () => {
           Load connections
         </button>
       </Section>
-      {processing && (
+      {processing && currentTarget && (
         <Section>
           <div>{targets.length} targets left</div>
           <div>Current target {currentTarget.login}</div>
@@ -80,14 +81,14 @@ const Subscribe = () => {
           </button>
         )}
 
-        {following.map((user: any, index: number) => (
+        {following.map((user: UserInfo, index: number) => (
           <UserItem
             withCheckbox
             key={user.login}
             user={user}
-            checked={followList.findIndex((u: any) => u.login === user.login) !== -1}
+            checked={followList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
-              const currentIndex = followList.findIndex((u: any) => u.login === user.login);
+              const currentIndex = followList.findIndex(u => u.login === user.login);
               const newFollowList = [...followList];
 
               if (currentIndex !== -1) {

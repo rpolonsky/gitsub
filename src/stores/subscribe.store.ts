@@ -2,11 +2,12 @@ import { observable, action } from 'mobx';
 import axios from 'axios';
 
 import MainStore from './main.store';
+import { UserInfo } from '../types';
 
 interface Subscribe {
-  following: any[];
-  targets: any[];
-  currentTarget: any;
+  following: UserInfo[];
+  targets: UserInfo[];
+  currentTarget?: UserInfo;
   page: number;
   loading: boolean;
   processing: boolean;
@@ -20,9 +21,9 @@ const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 class SubscribeStore implements Subscribe {
   private main: MainStore;
 
-  @observable following: any[] = [];
-  @observable targets: any[] = [];
-  @observable currentTarget: any = null;
+  @observable following: UserInfo[] = [];
+  @observable targets: UserInfo[] = [];
+  @observable currentTarget?: UserInfo = undefined;
   @observable loading = false;
   @observable processing = false;
   @observable page = 1;
@@ -78,7 +79,7 @@ class SubscribeStore implements Subscribe {
 
     recursive();
   };
-  @action followUsers = (users: any[], username: string, token: string) => {
+  @action followUsers = (users: UserInfo[], username: string, token: string) => {
     this.processing = true;
     this.targets = [...users];
 

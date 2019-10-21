@@ -17,9 +17,10 @@ export type UserInfo = {
   received_events_url: string;
   type: string;
   site_admin: boolean;
+  processed?: boolean;
 };
 
-export type UserExtendedInfo = UserInfo & {}
+export type UserExtendedInfo = UserInfo & {};
 
 export type FollowersSnapshot = {
   date: Date;
