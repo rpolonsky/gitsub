@@ -20,7 +20,21 @@ export type UserInfo = {
   processed?: boolean;
 };
 
-export type UserExtendedInfo = UserInfo & {};
+export type UserExtendedInfo = UserInfo & {
+  name: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string;
+  hireable: boolean;
+  bio: string;
+  public_repos: number;
+  public_gists: number;
+  followers: number;
+  following: number;
+  created_at: string;
+  updated_at: string;
+};
 
 export type FollowersSnapshot = {
   date: Date;

@@ -12,12 +12,13 @@ import { useBaseStore } from '../../stores';
 import s from './Unsubscribe.module.css';
 
 const Unsubscribe = () => {
-  const [unfollowList, setUnfollowList] = useState<any[]>([]);
+  const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
   const [pageLimit, setPageLimit] = useState<string>('');
   const [selectNotFollowers, setSelectNotFollowers] = useState<boolean>(false);
   const [selectNotMuchFollowed, setSelectNotMuchFollowed] = useState<boolean>(false);
 
   const {
+    users,
     unsubscribe,
     followers,
     subscribe,
@@ -33,16 +34,26 @@ const Unsubscribe = () => {
     if (followers.loading) {
       return;
     }
-    let unfollowList = [...subscribe.following];
+    let newList = [...subscribe.following];
+
     if (selectNotFollowers && followers.followers.length && !followers.loading) {
-      unfollowList = differenceBy(
-        subscribe.following,
-        followers.followers,
-        (user: UserInfo) => user.login,
-      );
+      newList = differenceBy(newList, followers.followers, user => user.login);
     }
-    setUnfollowList(unfollowList);
-  }, [subscribe.following.length, followers.followers.length, followers.loading]);
+
+    if (selectNotMuchFollowed && users.userInfoExtended.length && !users.loading) {
+      const noExtInfo = differenceBy(newList, users.userInfoExtended, user => user.login);
+      const muchFollowed = users.userInfoExtended.filter(user => user.followers >= 100);
+
+      newList = differenceBy(newList, [...noExtInfo, ...muchFollowed], user => user.login);
+    }
+
+    setUnfollowList(newList);
+  }, [
+    subscribe.following.length,
+    followers.followers.length,
+    users.userInfoExtended.length,
+    followers.loading,
+  ]);
 
   /* load/update followers list */
   useEffect(() => {
@@ -51,6 +62,13 @@ const Unsubscribe = () => {
     }
   }, [selectNotFollowers]);
 
+  /* load/update extended user info */
+  useEffect(() => {
+    if (selectNotMuchFollowed) {
+      users.getUsersExtendedInfo(subscribe.following, username, token);
+    }
+  }, [selectNotMuchFollowed]);
+
   /* send impression event */
   useEffect(() => {
     gtag('event', 'impression', { event_category: 'unsubscribe' });
@@ -58,7 +76,7 @@ const Unsubscribe = () => {
 
   return (
     <>
-      {unsubscribe.processing && (
+      {unsubscribe.processing && unsubscribe.currentTarget && (
         <Section>
           <div>{unsubscribe.targets.length} targets left</div>
           <div>Current target {unsubscribe.currentTarget.login}</div>
@@ -76,6 +94,7 @@ const Unsubscribe = () => {
         <div className={s.row}>
           <button
             onClick={() => {
+              setUnfollowList([]);
               subscribe.getUserFollowingList(username, username, token, +pageLimit);
               gtag('event', 'load-my-connections', {
                 event_category: 'unsubscribe',
@@ -116,7 +135,9 @@ const Unsubscribe = () => {
               checked={selectNotFollowers}
               disabled={followers.loading}
             />
-            <label htmlFor="notFollowers">Select only users that don't follow me back</label>
+            <label htmlFor="notFollowers">
+              Select only users that don't follow me back (will load your followers list)
+            </label>
           </div>
           <div>
             <input
@@ -128,10 +149,15 @@ const Unsubscribe = () => {
               checked={selectNotMuchFollowed}
               disabled={followers.loading}
             />
-            <label htmlFor="notMuchFollowed">Select users with less than 100 followers</label>
+            <label htmlFor="notMuchFollowed">
+              Select users with less than 100 followers (caution: time consuming operation)
+            </label>
           </div>
           {followers.loading && (
             <div className={s.row}>Loading your followers (page #{followers.page})...</div>
+          )}
+          {users.loading && users.currentTarget && (
+            <div className={s.row}>Loading extended info about {users.currentTarget.login}...</div>
           )}
         </Section>
       )}
@@ -150,14 +176,14 @@ const Unsubscribe = () => {
           </button>
         )}
         {!subscribe.following.length && !subscribe.loading && 'yet empty...'}
-        {subscribe.following.map((user: any, index: number) => (
+        {subscribe.following.map((user: UserInfo, index: number) => (
           <UserItem
             withCheckbox
             key={user.login}
             user={user}
-            checked={unfollowList.findIndex((u: any) => u.login === user.login) !== -1}
+            checked={unfollowList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
-              const currentIndex = unfollowList.findIndex((u: any) => u.login === user.login);
+              const currentIndex = unfollowList.findIndex(u => u.login === user.login);
               const newFollowList = [...unfollowList];
 
               if (currentIndex !== -1) {

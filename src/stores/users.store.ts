@@ -1,4 +1,4 @@
-import { observable, action, toJS } from 'mobx';
+import { observable, action } from 'mobx';
 import axios from 'axios';
 
 import MainStore from './main.store';
@@ -23,7 +23,9 @@ class UsersStore implements Users {
   constructor(mainStore: MainStore) {
     this.main = mainStore;
   }
-  @action getUsersExtendedInfo = async (targets: UserInfo[], username: string, token: string) => {
+  @action getUsersExtendedInfo = async (users: UserInfo[], username: string, token: string) => {
+    const targets = [...users];
+
     const recursive = async () => {
       try {
         this.currentTarget = targets.shift();
@@ -42,8 +44,6 @@ class UsersStore implements Users {
           setTimeout(() => {
             recursive();
           }, TIMEOUT);
-        } else {
-          console.log('this.userInfoExtended', toJS(this.userInfoExtended)); // TODO Remove
         }
       } catch (error) {
         console.error('error', error);
@@ -78,11 +78,12 @@ class UsersStore implements Users {
       this.main.setRemainingRateLimit(headers);
 
       //TODO: save to local storage
+      this.loading = false;
       return data;
     } catch (error) {
       console.error('error', error);
       this.main.setError(error.message ?? error);
-    } finally {
+
       this.loading = false;
       return null;
     }
