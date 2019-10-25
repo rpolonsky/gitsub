@@ -51,7 +51,8 @@
   "reactSnapshot": {
     "include": [
       "/",
-      "/followers"
+      "/followers",
+      "/unsubscribe"
     ],
     "snapshotDelay": 300
   },
