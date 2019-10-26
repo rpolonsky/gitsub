@@ -27,3 +27,12 @@
 .title:after {
   content: ']';
 }
+
+@media only screen and (max-width: 480px) {
+  .section {
+    padding: 15px;
+  }
+  .title {
+    transform: translateY(-25px);
+  }
+}
