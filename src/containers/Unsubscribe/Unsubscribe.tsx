@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import differenceBy from 'lodash/differenceBy';
+import diffBy from 'lodash/differenceBy';
 
 import UserItem from '../../components/UserItem/UserItem';
 import Section from '../../components/Section/Section';
@@ -14,8 +14,6 @@ import s from './Unsubscribe.module.css';
 const Unsubscribe = () => {
   const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
   const [pageLimit, setPageLimit] = useState<string>('');
-  const [selectNotFollowers, setSelectNotFollowers] = useState<boolean>(false);
-  const [selectNotMuchFollowed, setSelectNotMuchFollowed] = useState<boolean>(false);
 
   const {
     users,
@@ -31,43 +29,32 @@ const Unsubscribe = () => {
 
   /* update local list of users to unfollow */
   useEffect(() => {
-    if (followers.loading) {
+    if (subscribe.loading || !subscribe.following.length) {
       return;
     }
-    let newList = [...subscribe.following];
+    setUnfollowList(subscribe.following);
+  }, [subscribe.loading]);
 
-    if (selectNotFollowers && followers.followers.length && !followers.loading) {
-      newList = differenceBy(newList, followers.followers, user => user.login);
+  /* uncheck my followers */
+  useEffect(() => {
+    if (followers.loading || !followers.followers.length) {
+      return;
     }
-
-    if (selectNotMuchFollowed && users.userInfoExtended.length && !users.loading) {
-      const noExtInfo = differenceBy(newList, users.userInfoExtended, user => user.login);
-      const muchFollowed = users.userInfoExtended.filter(user => user.followers >= 100);
-
-      newList = differenceBy(newList, [...noExtInfo, ...muchFollowed], user => user.login);
-    }
-
+    const newList = diffBy(unfollowList, followers.followers, user => user.login);
     setUnfollowList(newList);
-  }, [
-    subscribe.following.length,
-    followers.followers.length,
-    users.userInfoExtended.length,
-    followers.loading,
-  ]);
+  }, [followers.loading]);
 
-  /* load/update followers list */
+  /* uncheck users with more than 100 followers */
   useEffect(() => {
-    if (selectNotFollowers) {
-      followers.getUserFollowersList(username, username, token);
+    if (users.loading || !users.userInfoExtended.length) {
+      return;
     }
-  }, [selectNotFollowers]);
+    const noExtInfo = diffBy(unfollowList, users.userInfoExtended, user => user.login);
+    const muchFollowed = users.userInfoExtended.filter(user => user.followers >= 100);
 
-  /* load/update extended user info */
-  useEffect(() => {
-    if (selectNotMuchFollowed) {
-      users.getUsersExtendedInfo(subscribe.following, username, token);
-    }
-  }, [selectNotMuchFollowed]);
+    const list = diffBy(unfollowList, [...noExtInfo, ...muchFollowed], user => user.login);
+    setUnfollowList(list);
+  }, [users.loading]);
 
   /* send impression event */
   useEffect(() => {
@@ -125,34 +112,25 @@ const Unsubscribe = () => {
       </Section>
       {readyToProcess && (
         <Section title="some selection helpers for you">
-          <div>
-            <input
-              type="checkbox"
-              id="notFollowers"
-              onChange={(e: any) => {
-                setSelectNotFollowers(e.target.checked);
-              }}
-              checked={selectNotFollowers}
-              disabled={followers.loading}
-            />
-            <label htmlFor="notFollowers">
-              Select only users that don't follow me back (will load your followers list)
-            </label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              id="notMuchFollowed"
-              onChange={(e: any) => {
-                setSelectNotMuchFollowed(e.target.checked);
-              }}
-              checked={selectNotMuchFollowed}
-              disabled={followers.loading}
-            />
-            <label htmlFor="notMuchFollowed">
-              Select users with less than 100 followers (caution: time consuming operation)
-            </label>
-          </div>
+          <button
+            onClick={async () => {
+              /* load/update followers list */
+              followers.getUserFollowersList(username, username, token);
+            }}
+            disabled={followers.loading || users.loading}
+          >
+            Uncheck my followers <br /> (will load your followers list)
+          </button>
+          <button
+            onClick={() => {
+              /* load/update extended user info */
+              users.getUsersExtendedInfo(unfollowList, username, token);
+            }}
+            disabled={followers.loading || users.loading}
+          >
+            Uncheck users with more than 100 followers <br /> (caution: time consuming operation)
+          </button>
+
           {followers.loading && (
             <div className={s.row}>Loading your followers (page #{followers.page})...</div>
           )}

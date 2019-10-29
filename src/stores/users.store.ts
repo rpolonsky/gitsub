@@ -25,6 +25,7 @@ class UsersStore implements Users {
   }
   @action getUsersExtendedInfo = async (users: UserInfo[], username: string, token: string) => {
     const targets = [...users];
+    this.loading = true;
 
     const recursive = async () => {
       try {
@@ -44,6 +45,8 @@ class UsersStore implements Users {
           setTimeout(() => {
             recursive();
           }, TIMEOUT);
+        } else {
+          this.loading = false;
         }
       } catch (error) {
         console.error('error', error);
@@ -60,7 +63,6 @@ class UsersStore implements Users {
     token: string,
   ): Promise<UserExtendedInfo | null> => {
     try {
-      this.loading = true;
       //TODO: Check local storage
       const { headers, data } = await axios.get(
         GH_EXTENDED_INFO_URL_TEMPLATE.replace('%USERNAME%', targetUsername),
@@ -78,13 +80,10 @@ class UsersStore implements Users {
       this.main.setRemainingRateLimit(headers);
 
       //TODO: save to local storage
-      this.loading = false;
       return data;
     } catch (error) {
       console.error('error', error);
       this.main.setError(error.message ?? error);
-
-      this.loading = false;
       return null;
     }
   };
