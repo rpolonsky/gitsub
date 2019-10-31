@@ -46,11 +46,13 @@ const Unsubscribe = () => {
 
   /* uncheck users with more than 100 followers */
   useEffect(() => {
-    if (users.loading || !users.userInfoExtended.length) {
+    const extendedInfoItems = Object.values(users.extendedInfo);
+
+    if (users.loading || !extendedInfoItems.length) {
       return;
     }
-    const noExtInfo = diffBy(unfollowList, users.userInfoExtended, user => user.login);
-    const muchFollowed = users.userInfoExtended.filter(user => user.followers >= 100);
+    const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
+    const muchFollowed = extendedInfoItems.filter(user => user.followers >= 100);
 
     const list = diffBy(unfollowList, [...noExtInfo, ...muchFollowed], user => user.login);
     setUnfollowList(list);
