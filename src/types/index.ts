@@ -34,6 +34,7 @@ export type UserExtendedInfo = UserInfo & {
   following: number;
   created_at: string;
   updated_at: string;
+  stored_at?: number;
 };
 
 export type FollowersSnapshot = {
