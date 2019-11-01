@@ -5,7 +5,7 @@ import MainStore from './main.store';
 import { UserInfo, UserExtendedInfo } from '../types';
 
 interface Users {
-  userInfoExtended: UserExtendedInfo[];
+  extendedInfo: { [login: string]: UserExtendedInfo };
   currentTarget?: UserInfo;
   loading: boolean;
 }
@@ -16,7 +16,7 @@ const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
 class UsersStore implements Users {
   private main: MainStore;
 
-  @observable userInfoExtended: UserExtendedInfo[] = [];
+  @observable extendedInfo: { [login: string]: UserExtendedInfo } = {};
   @observable currentTarget?: UserInfo = undefined;
   @observable loading = false;
 
@@ -38,7 +38,7 @@ class UsersStore implements Users {
         const userInfo = await this.getUserExtendedInfo(this.currentTarget.login, username, token);
 
         if (userInfo) {
-          this.userInfoExtended.push(userInfo);
+          this.extendedInfo[userInfo.login] = userInfo;
         }
 
         if (targets.length) {
