@@ -75,7 +75,7 @@ class UsersStore implements Users {
       if (
         stored &&
         stored.stored_at &&
-        diffDays(new Date(), new Date(stored.stored_at)) < CACHE_LIFETIME_DAYS
+        diffDays(new Date(), new Date(stored.stored_at)) <= CACHE_LIFETIME_DAYS
       ) {
         return stored;
       }
