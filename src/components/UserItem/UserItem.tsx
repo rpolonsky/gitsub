@@ -1,19 +1,20 @@
 import React from 'react';
 import cx from 'classnames';
 
-import { UserInfo } from '../../types';
+import { UserInfo, UserExtendedInfo } from '../../types';
 
 import s from './UserItem.module.css';
 
 type Props = {
-  user: UserInfo & { processed?: boolean };
+  user: UserInfo;
+  extended?: UserExtendedInfo;
   onClick?: VoidFunction;
   checked?: boolean;
   withCheckbox?: boolean;
   className?: string;
 };
 
-const UserItem = ({ user, onClick, className, checked, withCheckbox = false }: Props) => {
+const UserItem = ({ user, onClick, extended, className, checked, withCheckbox = false }: Props) => {
   return (
     <div className={cx(s.item, className, { unchecked: !checked })} onClick={onClick}>
       {withCheckbox && (
@@ -30,7 +31,17 @@ const UserItem = ({ user, onClick, className, checked, withCheckbox = false }: P
           {user.login}
         </a>
       </div>
-      {user.processed && 'processed'}
+      <div className={s.stats}>
+        {extended && (
+          <>
+            <span>followed:{extended.followers}</span>
+            <span>follows:{extended.following}</span>
+            <span>gists:{extended.public_gists}</span>
+            <span>visited:{new Date(extended.updated_at).toLocaleDateString()}</span>
+          </>
+        )}
+      </div>
+      <div className={s.state}>{user.processed && '✓'}</div>
     </div>
   );
 };

@@ -161,6 +161,7 @@ const Unsubscribe = () => {
             withCheckbox
             key={user.login}
             user={user}
+            extended={users.extendedInfo[user.login]}
             checked={unfollowList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
               const currentIndex = unfollowList.findIndex(u => u.login === user.login);
