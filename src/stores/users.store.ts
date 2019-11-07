@@ -70,7 +70,8 @@ class UsersStore implements Users {
     token: string,
   ): Promise<UserExtendedInfo | null> => {
     try {
-      const stored = await this.getStoredExtendedInfo(targetUsername);
+      const stored =
+        this.extendedInfo[targetUsername] || (await this.getStoredExtendedInfo(targetUsername));
 
       if (
         stored &&
