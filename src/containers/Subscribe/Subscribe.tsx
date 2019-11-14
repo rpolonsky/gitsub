@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 
@@ -12,6 +13,7 @@ const Subscribe = () => {
   const {
     subscribe: {
       getUserFollowingList,
+      resetFollowingList,
       followUsers,
       following,
       targets,
@@ -28,6 +30,7 @@ const Subscribe = () => {
   }, [following]);
 
   useEffect(() => {
+    resetFollowingList();
     gtag('event', 'impression', { event_category: 'subscribe' });
   }, []);
 

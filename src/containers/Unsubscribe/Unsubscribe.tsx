@@ -60,6 +60,7 @@ const Unsubscribe = () => {
 
   /* send impression event */
   useEffect(() => {
+    subscribe.resetFollowingList();
     gtag('event', 'impression', { event_category: 'unsubscribe' });
   }, []);
 

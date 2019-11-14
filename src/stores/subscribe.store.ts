@@ -124,6 +124,9 @@ class SubscribeStore implements Subscribe {
     };
     recursive();
   };
+  @action resetFollowingList = () => {
+    this.following = [];
+  };
 }
 
 export default SubscribeStore;
