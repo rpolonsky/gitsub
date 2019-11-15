@@ -21,6 +21,13 @@
 .item.unchecked {
   opacity: 0.3;
 }
+.item.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.item.disabled * {
+  cursor: not-allowed;
+}
 .stats {
   display: flex;
   flex-direction: column;

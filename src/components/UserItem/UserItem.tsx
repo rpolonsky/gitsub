@@ -11,14 +11,34 @@ type Props = {
   onClick?: VoidFunction;
   checked?: boolean;
   withCheckbox?: boolean;
+  disabled?: boolean;
   className?: string;
 };
 
-const UserItem = ({ user, onClick, extended, className, checked, withCheckbox = false }: Props) => {
+const UserItem = ({
+  user,
+  onClick,
+  extended,
+  className,
+  disabled,
+  checked,
+  withCheckbox = false,
+}: Props) => {
+  const handleClick = !disabled ? onClick : undefined;
+
   return (
-    <div className={cx(s.item, className, { unchecked: !checked })} onClick={onClick}>
+    <div
+      className={cx(s.item, className, { [s.unchecked]: !checked }, { [s.disabled]: disabled })}
+      onClick={handleClick}
+    >
       {withCheckbox && (
-        <input type="checkbox" name={user.login} onChange={onClick} checked={checked} />
+        <input
+          type="checkbox"
+          name={user.login}
+          disabled={disabled}
+          onChange={handleClick}
+          checked={checked}
+        />
       )}
       <img src={user.avatar_url} alt={user.login} />
       <div className={s.name}>
