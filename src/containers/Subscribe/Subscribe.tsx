@@ -60,7 +60,7 @@ const Subscribe = () => {
               event_label: sourceUsername,
             });
           }}
-          disabled={loading}
+          disabled={loading || processing}
         >
           Load connections
         </button>
@@ -79,15 +79,18 @@ const Subscribe = () => {
               followUsers(followList, username, token);
               gtag('event', 'follow-users', { event_category: 'subscribe' });
             }}
+            disabled={loading || processing}
           >
-            {loading ? `Loading page #${page}...` : `Follow ${followList.length} users`}
+            Follow {followList.length} users
           </button>
         )}
+        {loading && `Loading page #${page}...`}
 
         {following.map((user: UserInfo, index: number) => (
           <UserItem
             withCheckbox
             key={user.login}
+            disabled={processing}
             user={user}
             checked={followList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
