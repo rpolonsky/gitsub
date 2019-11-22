@@ -52,7 +52,7 @@ class UsersStore implements Users {
             recursive();
           }, TIMEOUT);
         } else {
-          this.saveUsersExtendedInfo(this.extendedInfo);
+          this.storeUsersExtendedInfo(this.extendedInfo);
           this.loading = false;
         }
       } catch (error) {
@@ -104,7 +104,7 @@ class UsersStore implements Users {
     }
   };
 
-  @action saveUsersExtendedInfo = async (users: UsersExtendedInfo) => {
+  @action storeUsersExtendedInfo = async (users: UsersExtendedInfo) => {
     try {
       const dataString: string = await localforage.getItem(EXT_INFO_STORAGE_KEY);
       const data: UsersExtendedInfo = dataString ? JSON.parse(dataString) : {};

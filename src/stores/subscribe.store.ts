@@ -1,4 +1,6 @@
 import { observable, action } from 'mobx';
+import localforage from 'localforage';
+import uniq from 'lodash/uniq';
 import axios from 'axios';
 
 import MainStore from './main.store';
@@ -15,6 +17,7 @@ interface Subscribe {
 
 const TIMEOUT = 0;
 const MAX_PAGE_LIMIT = 0;
+const FOLLOWED_USERS_STORAGE_KEY = '_followedUsers';
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
 const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 
@@ -106,6 +109,7 @@ class SubscribeStore implements Subscribe {
           event_value: this.currentTarget.login,
         });
 
+        this.storeFollowedUsername(this.currentTarget.login, username);
         this.main.setRemainingRateLimit(headers);
         this.currentTarget.processed = true;
 
@@ -124,6 +128,21 @@ class SubscribeStore implements Subscribe {
     };
     recursive();
   };
+
+  @action storeFollowedUsername = async (followedUsername: string, username: string) => {
+    try {
+      const key = username + FOLLOWED_USERS_STORAGE_KEY;
+      const data: string[] = (await localforage.getItem(key)) || [];
+
+      data.push(followedUsername);
+
+      await localforage.setItem(key, uniq(data));
+    } catch (error) {
+      console.error('error', error);
+      this.main.setError(error.message ?? error);
+    }
+  };
+
   @action resetFollowingList = () => {
     this.following = [];
   };

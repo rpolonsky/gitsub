@@ -74,7 +74,7 @@ class FollowersStore implements Followers {
     recursive();
   };
 
-  @action saveFollowersList = async (username: string) => {
+  @action storeFollowersList = async (username: string) => {
     try {
       this.saving = true;
       const key = `followers_${username}`;

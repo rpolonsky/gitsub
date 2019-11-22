@@ -20,7 +20,7 @@ const Followers = () => {
       loading,
       saving,
       getUserFollowersList,
-      saveFollowersList,
+      storeFollowersList,
       cleanFollowersList,
       getFollowersListDiff,
     },
@@ -80,7 +80,7 @@ const Followers = () => {
           <button
             disabled={!followers.length || loading || !targetUsername.length}
             onClick={() => {
-              saveFollowersList(targetUsername);
+              storeFollowersList(targetUsername);
               gtag('event', 'save-followers', {
                 event_category: 'followers',
                 event_label: targetUsername,
