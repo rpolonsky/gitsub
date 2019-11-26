@@ -20,7 +20,7 @@ const UserItem = ({
   onClick,
   extended,
   className,
-  disabled,
+  disabled = false,
   checked,
   withCheckbox = false,
 }: Props) => {
@@ -28,7 +28,12 @@ const UserItem = ({
 
   return (
     <div
-      className={cx(s.item, className, { [s.unchecked]: !checked }, { [s.disabled]: disabled })}
+      className={cx(
+        s.item,
+        className,
+        { [s.unchecked]: withCheckbox && !checked },
+        { [s.disabled]: disabled },
+      )}
       onClick={handleClick}
     >
       {withCheckbox && (
