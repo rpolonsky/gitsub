@@ -15,6 +15,7 @@ const Subscribe = () => {
       getUserFollowingList,
       resetFollowingList,
       followUsers,
+      storedFollowedUsers,
       following,
       targets,
       currentTarget,
@@ -91,6 +92,7 @@ const Subscribe = () => {
             withCheckbox
             key={user.login}
             disabled={processing}
+            followed={storedFollowedUsers.indexOf(user.login) !== -1}
             user={user}
             checked={followList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {

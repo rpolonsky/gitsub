@@ -12,6 +12,7 @@ type Props = {
   checked?: boolean;
   withCheckbox?: boolean;
   disabled?: boolean;
+  followed?: boolean;
   className?: string;
 };
 
@@ -20,9 +21,10 @@ const UserItem = ({
   onClick,
   extended,
   className,
-  disabled = false,
+  disabled,
+  followed,
   checked,
-  withCheckbox = false,
+  withCheckbox,
 }: Props) => {
   const handleClick = !disabled ? onClick : undefined;
 
@@ -65,6 +67,7 @@ const UserItem = ({
             <span>visited:{new Date(extended.updated_at).toLocaleDateString()}</span>
           </>
         )}
+        {followed && <span className={s.followed}>already followed</span>}
       </div>
       <div className={s.state}>{user.processed && '✓'}</div>
     </div>

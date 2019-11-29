@@ -29,7 +29,7 @@ const Menu = () => {
       {!!remainingRateLimit && (
         <Section title="rate limits">
           <div>
-            available: {remainingRateLimit.remaining} out of {remainingRateLimit.limit} requests
+            available requests: {remainingRateLimit.remaining} / {remainingRateLimit.limit}
           </div>
           <div>reset time: {remainingRateLimit.resetDate.toLocaleString()}</div>
         </Section>

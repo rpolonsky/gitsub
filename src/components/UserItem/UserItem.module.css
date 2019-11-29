@@ -38,6 +38,10 @@
   font-size: 26px;
   font-weight: bold;
 }
+.followed {
+  font-size: 6px;
+  color: #aaa;
+}
 
 @media only screen and (max-width: 480px) {
   .name {

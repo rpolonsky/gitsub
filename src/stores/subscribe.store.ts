@@ -7,6 +7,7 @@ import MainStore from './main.store';
 import { UserInfo } from '../types';
 
 interface Subscribe {
+  storedFollowedUsers: string[];
   following: UserInfo[];
   targets: UserInfo[];
   currentTarget?: UserInfo;
@@ -24,6 +25,7 @@ const GH_FOLLOW_URL_TEMPLATE = '/api/gh/user/following/%USERNAME%';
 class SubscribeStore implements Subscribe {
   private main: MainStore;
 
+  @observable storedFollowedUsers: string[] = [];
   @observable following: UserInfo[] = [];
   @observable targets: UserInfo[] = [];
   @observable currentTarget?: UserInfo = undefined;
@@ -71,6 +73,15 @@ class SubscribeStore implements Subscribe {
           setTimeout(() => recursive(), TIMEOUT);
         } else {
           this.loading = false;
+
+          /* store user's own subscription list  */
+          if (targetUser === username) {
+            await this.storeFollowedUsers(
+              this.following.map(u => u.login),
+              targetUser,
+            );
+          }
+          await this.loadStoredFollowedUsers(username);
         }
       } catch (error) {
         console.error('error', error);
@@ -109,7 +120,7 @@ class SubscribeStore implements Subscribe {
           event_value: this.currentTarget.login,
         });
 
-        this.storeFollowedUsername(this.currentTarget.login, username);
+        this.storeFollowedUsers(this.currentTarget.login, username);
         this.main.setRemainingRateLimit(headers);
         this.currentTarget.processed = true;
 
@@ -129,18 +140,24 @@ class SubscribeStore implements Subscribe {
     recursive();
   };
 
-  @action storeFollowedUsername = async (followedUsername: string, username: string) => {
+  @action storeFollowedUsers = async (followedUsers: string[] | string, username: string) => {
     try {
       const key = username + FOLLOWED_USERS_STORAGE_KEY;
       const data: string[] = (await localforage.getItem(key)) || [];
 
-      data.push(followedUsername);
+      data.push(...(Array.isArray(followedUsers) ? followedUsers : [followedUsers]));
 
       await localforage.setItem(key, uniq(data));
+      this.storedFollowedUsers = data;
     } catch (error) {
       console.error('error', error);
       this.main.setError(error.message ?? error);
     }
+  };
+
+  @action loadStoredFollowedUsers = async (username: string) => {
+    this.storedFollowedUsers =
+      (await localforage.getItem(username + FOLLOWED_USERS_STORAGE_KEY)) || [];
   };
 
   @action resetFollowingList = () => {
