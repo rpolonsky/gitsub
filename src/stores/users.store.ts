@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, toJS } from 'mobx';
 import localforage from 'localforage';
 import axios from 'axios';
 
@@ -106,14 +106,18 @@ class UsersStore implements Users {
 
   @action storeUsersExtendedInfo = async (users: UsersExtendedInfo) => {
     try {
-      const dataString: string = await localforage.getItem(EXT_INFO_STORAGE_KEY);
-      const data: UsersExtendedInfo = dataString ? JSON.parse(dataString) : {};
+      const rawData = await localforage.getItem(EXT_INFO_STORAGE_KEY);
+      const storedData = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+      const data: UsersExtendedInfo = storedData || {};
 
       Object.values(users).forEach(u => {
         u.stored_at = Date.now();
       });
 
-      await localforage.setItem(EXT_INFO_STORAGE_KEY, JSON.stringify({ ...data, ...users }));
+      await localforage.setItem(
+        EXT_INFO_STORAGE_KEY,
+        toJS({ ...data, ...users }, { recurseEverything: true }),
+      );
     } catch (error) {
       console.error('error', error);
       this.main.setError(error.message ?? error);
@@ -124,8 +128,9 @@ class UsersStore implements Users {
     username: string,
   ): Promise<UserExtendedInfo | undefined> => {
     try {
-      const dataString: string = await localforage.getItem(EXT_INFO_STORAGE_KEY);
-      const data: UsersExtendedInfo = dataString ? JSON.parse(dataString) : {};
+      const rawData = await localforage.getItem(EXT_INFO_STORAGE_KEY);
+      const storedData = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+      const data: UsersExtendedInfo = storedData || {};
 
       return data[username];
     } catch (error) {

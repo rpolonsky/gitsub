@@ -56,7 +56,7 @@ const Followers = () => {
           type="text"
           value={targetUsername}
           placeholder="ex.: rpolonsky"
-          onChange={e => setTargetUsername(e.target.value)}
+          onChange={e => setTargetUsername(e.target.value.trim())}
           onKeyUp={e => {
             if (e.keyCode === 13) {
               getUserFollowersList(targetUsername, username, token);

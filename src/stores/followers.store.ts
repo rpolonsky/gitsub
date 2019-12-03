@@ -74,23 +74,6 @@ class FollowersStore implements Followers {
     recursive();
   };
 
-  @action storeFollowersList = async (username: string) => {
-    try {
-      this.saving = true;
-      const key = `followers_${username}`;
-
-      let dataToStore = await this.getStoredFollowersList(username);
-      dataToStore.push({ date: new Date(), followers: this.followers });
-
-      await localforage.setItem(key, JSON.stringify(dataToStore));
-    } catch (error) {
-      console.error('error', error);
-      this.main.setError(error.message ?? error);
-    } finally {
-      this.saving = false;
-    }
-  };
-
   @action cleanFollowersList = () => {
     this.followers = [];
   };
@@ -118,6 +101,23 @@ class FollowersStore implements Followers {
       gained: diff(this.followers, prevFollowers, i => i.id),
       kept: intersect(this.followers, prevFollowers, i => i.id),
     };
+  };
+
+  @action storeFollowersList = async (username: string) => {
+    try {
+      this.saving = true;
+      const key = `followers_${username}`;
+
+      let dataToStore = await this.getStoredFollowersList(username);
+      dataToStore.push({ date: new Date(), followers: this.followers });
+
+      await localforage.setItem(key, JSON.stringify(dataToStore));
+    } catch (error) {
+      console.error('error', error);
+      this.main.setError(error.message ?? error);
+    } finally {
+      this.saving = false;
+    }
   };
 
   @action getStoredFollowersList = async (username: string): Promise<FollowersSnapshot[]> => {

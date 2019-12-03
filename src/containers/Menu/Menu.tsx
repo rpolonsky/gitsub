@@ -40,7 +40,7 @@ const Menu = () => {
           id="user[login]"
           type="text"
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={e => setUsername(e.target.value.trim())}
           onFocus={() => {
             gtag('event', 'user-input-focus', { event_category: 'menu' });
           }}
