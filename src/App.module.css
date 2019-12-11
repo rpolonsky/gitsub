@@ -28,6 +28,7 @@ button {
   border-bottom: 1px solid #777;
   border-right: 1px solid #777;
   padding: 5px;
+  margin: 2px 0;
   transition: all 0.2s ease-out;
 }
 button:disabled {

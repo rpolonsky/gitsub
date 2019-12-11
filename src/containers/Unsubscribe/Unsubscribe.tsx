@@ -13,7 +13,8 @@ import s from './Unsubscribe.module.css';
 
 const Unsubscribe = () => {
   const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
-  const [pageLimit, setPageLimit] = useState<string>('');
+  const [pageLimit, setPageLimit] = useState<string | number>('');
+  const [minFollowers, setMinFollowers] = useState<string | number>(10000);
 
   const {
     users,
@@ -44,7 +45,7 @@ const Unsubscribe = () => {
     setUnfollowList(newList);
   }, [followers.loading]);
 
-  /* uncheck users with more than 100 followers */
+  /* uncheck users with more than 'minFollowers' followers */
   useEffect(() => {
     const extendedInfoItems = Object.values(users.extendedInfo);
 
@@ -52,7 +53,7 @@ const Unsubscribe = () => {
       return;
     }
     const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
-    const muchFollowed = extendedInfoItems.filter(user => user.followers >= 100);
+    const muchFollowed = extendedInfoItems.filter(user => user.followers >= minFollowers);
 
     const list = diffBy(unfollowList, [...noExtInfo, ...muchFollowed], user => user.login);
     setUnfollowList(list);
@@ -100,16 +101,18 @@ const Unsubscribe = () => {
             <input
               id="pageLimit"
               type="number"
+              className={s.pageLimitInput}
               inputMode="numeric"
               pattern="[0-9]*"
               value={pageLimit}
               onChange={e => {
-                setPageLimit(e.target.value);
+                const val = +e.target.value;
+                setPageLimit(val < 0 ? 0 : val);
               }}
               onFocus={() => {
                 gtag('event', 'pages-num-focus', { event_category: 'unsubscribe' });
               }}
-            ></input>
+            />
           </div>
         </div>
       </Section>
@@ -131,8 +134,24 @@ const Unsubscribe = () => {
             }}
             disabled={followers.loading || users.loading}
           >
-            Uncheck users with more than 100 followers <br /> (caution: time consuming operation)
+            Uncheck users with more than {minFollowers} followers <br /> (caution: time consuming
+            operation)
           </button>
+          <div>
+            <label htmlFor="minFollowers">Minimal number of followers:</label>
+            <input
+              id="minFollowers"
+              type="number"
+              className={s.minFollowersInput}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={minFollowers}
+              onChange={e => {
+                const val = +e.target.value;
+                setMinFollowers(val < 0 ? 0 : val);
+              }}
+            />
+          </div>
 
           {followers.loading && (
             <div className={s.row}>Loading your followers (page #{followers.page})...</div>
