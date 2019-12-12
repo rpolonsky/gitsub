@@ -8,7 +8,6 @@ interface Unsubscribe {
   targets: UserInfo[];
   currentTarget?: UserInfo;
   page: number;
-  loading: boolean;
   processing: boolean;
 }
 
@@ -21,7 +20,6 @@ class UnsubscribeStore implements Unsubscribe {
 
   @observable targets: UserInfo[] = [];
   @observable currentTarget?: UserInfo = undefined;
-  @observable loading = false;
   @observable processing = false;
   @observable page = 1;
 

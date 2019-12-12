@@ -66,12 +66,14 @@ const Subscribe = () => {
           Load connections
         </button>
       </Section>
+
       {processing && currentTarget && (
         <Section>
           <div>{targets.length} targets left</div>
           <div>Current target {currentTarget.login}</div>
         </Section>
       )}
+
       <Section title="list of connections">
         {!following.length && !loading && 'yet empty...'}
         {!!following.length && (

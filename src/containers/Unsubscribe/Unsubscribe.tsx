@@ -67,12 +67,6 @@ const Unsubscribe = () => {
 
   return (
     <>
-      {unsubscribe.processing && unsubscribe.currentTarget && (
-        <Section>
-          <div>{unsubscribe.targets.length} targets left</div>
-          <div>Current target {unsubscribe.currentTarget.login}</div>
-        </Section>
-      )}
       <Section>
         {noCredentials ? (
           <>
@@ -161,6 +155,14 @@ const Unsubscribe = () => {
           )}
         </Section>
       )}
+
+      {unsubscribe.processing && unsubscribe.currentTarget && (
+        <Section>
+          <div>{unsubscribe.targets.length} targets left</div>
+          <div>Current target {unsubscribe.currentTarget.login}</div>
+        </Section>
+      )}
+
       <Section title="list of users that you follow">
         {!!subscribe.following.length && (
           <button
@@ -168,7 +170,7 @@ const Unsubscribe = () => {
               unsubscribe.unfollowUsers(unfollowList, username, token);
               gtag('event', 'unfollow-users', { event_category: 'unsubscribe' });
             }}
-            disabled={followers.loading || subscribe.loading}
+            disabled={followers.loading || subscribe.loading || unsubscribe.processing}
           >
             {subscribe.loading
               ? `Loading page #${subscribe.page}...`
