@@ -111,7 +111,7 @@ const Unsubscribe = () => {
         </div>
       </Section>
       {readyToProcess && (
-        <Section title="some selection helpers for you">
+        <Section title="some helpers for you">
           <button
             onClick={async () => {
               /* load/update followers list */

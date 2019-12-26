@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
+import diffBy from 'lodash/differenceBy';
 import { observer } from 'mobx-react';
 
 import UserItem from '../../components/UserItem/UserItem';
@@ -7,9 +8,12 @@ import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
 import { UserInfo } from '../../types';
 
+import s from './Subscribe.module.css';
+
 const Subscribe = () => {
-  const [followList, setFollowList] = useState<any[]>([]);
+  const [followList, setFollowList] = useState<UserInfo[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
+  const [minFollowings, setMinFollowings] = useState<string | number>(1);
   const {
     subscribe: {
       getUserFollowingList,
@@ -23,8 +27,11 @@ const Subscribe = () => {
       processing,
       page,
     },
+    users,
     main: { username, token },
   } = useBaseStore();
+
+  const readyToProcess = !!following.length && !loading && !processing;
 
   useEffect(() => {
     setFollowList(following);
@@ -34,6 +41,20 @@ const Subscribe = () => {
     resetFollowingList();
     gtag('event', 'impression', { event_category: 'subscribe' });
   }, []);
+
+  /* uncheck users with less than 'minFollowings' followings */
+  useEffect(() => {
+    const extendedInfoItems = Object.values(users.extendedInfo);
+
+    if (users.loading || !extendedInfoItems.length) {
+      return;
+    }
+    const noExtInfo = diffBy(followList, extendedInfoItems, user => user.login);
+    const notMuchFollowing = extendedInfoItems.filter(user => user.following < minFollowings);
+
+    const list = diffBy(followList, [...noExtInfo, ...notMuchFollowing], user => user.login);
+    setFollowList(list);
+  }, [users.loading]);
 
   return (
     <>
@@ -67,6 +88,40 @@ const Subscribe = () => {
         </button>
       </Section>
 
+      {readyToProcess && (
+        <Section title="some helpers for you">
+          <button
+            onClick={() => {
+              /* load/update extended user info */
+              users.getUsersExtendedInfo(followList, username, token);
+            }}
+            disabled={loading || users.loading}
+          >
+            Uncheck users who follows less than {minFollowings} users <br /> (caution: time
+            consuming operation)
+          </button>
+          <div>
+            <label htmlFor="minFollowings">Minimal number of followings:</label>
+            <input
+              id="minFollowings"
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              className={s.minFollowingsInput}
+              value={minFollowings}
+              onChange={e => {
+                const val = +e.target.value;
+                setMinFollowings(val < 0 ? 0 : val);
+              }}
+            />
+          </div>
+
+          {users.loading && users.currentTarget && (
+            <div>Loading extended info about {users.currentTarget.login}...</div>
+          )}
+        </Section>
+      )}
+
       {processing && currentTarget && (
         <Section>
           <div>{targets.length} targets left</div>
@@ -95,6 +150,7 @@ const Subscribe = () => {
             key={user.login}
             disabled={processing}
             followed={storedFollowedUsers.indexOf(user.login) !== -1}
+            extended={users.extendedInfo[user.login]}
             user={user}
             checked={followList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
