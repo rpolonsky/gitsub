@@ -15,7 +15,7 @@ interface Users {
 }
 
 const TIMEOUT = 0;
-const CACHE_LIFETIME_DAYS = 1;
+const CACHE_LIFETIME_DAYS = 7;
 const EXT_INFO_STORAGE_KEY = 'userExtendedInfo';
 const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
 
