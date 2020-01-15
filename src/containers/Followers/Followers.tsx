@@ -68,10 +68,6 @@ const Followers = () => {
           <button
             onClick={() => {
               getUserFollowersList(targetUsername, username, token);
-              gtag('event', 'load-followers', {
-                event_category: 'followers',
-                event_label: targetUsername,
-              });
             }}
             disabled={loading || !targetUsername.length}
           >

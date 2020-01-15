@@ -30,48 +30,60 @@ class FollowersStore implements Followers {
     this.main = mainStore;
   }
 
-  @action getUserFollowersList = (targetUser: string, username: string, token: string) => {
-    this.loading = true;
-    this.page = 1;
-    this.followers = [];
+  @action getUserFollowersList = (
+    targetUser: string,
+    username: string,
+    token: string,
+  ): Promise<UserInfo[]> => {
+    return new Promise((resolve, reject) => {
+      this.loading = true;
+      this.page = 1;
+      this.followers = [];
 
-    const recursive = async () => {
-      try {
-        const result = await axios.get(
-          GH_FOLLOWERS_URL_TEMPLATE.replace('%USERNAME%', targetUser).replace(
-            '%PAGE%',
-            String(this.page),
-          ),
-          {
-            auth: {
-              username,
-              password: token,
+      const recursive = async () => {
+        try {
+          const result = await axios.get(
+            GH_FOLLOWERS_URL_TEMPLATE.replace('%USERNAME%', targetUser).replace(
+              '%PAGE%',
+              String(this.page),
+            ),
+            {
+              auth: {
+                username,
+                password: token,
+              },
             },
-          },
-        );
+          );
 
-        if (result?.data?.length) {
-          this.followers.push(...result.data);
-          this.followers = this.followers.slice().reverse();
-        }
+          if (result?.data?.length) {
+            this.followers.push(...result.data);
+            this.followers = this.followers.slice().reverse();
+          }
 
-        this.main.setRemainingRateLimit(result.headers);
+          this.main.setRemainingRateLimit(result.headers);
 
-        if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
-          this.page++;
-          setTimeout(() => recursive(), TIMEOUT);
-        } else {
+          if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
+            this.page++;
+            setTimeout(() => recursive(), TIMEOUT);
+          } else {
+            this.loading = false;
+            resolve(this.followers);
+            gtag('event', 'load-followers', {
+              event_category: 'followers',
+              event_label: targetUser,
+            });
+          }
+        } catch (error) {
+          console.error('error', error);
+          this.main.setError(error.message ?? error);
+          this.followers = [];
           this.loading = false;
+          reject(error);
         }
-      } catch (error) {
-        console.error('error', error);
-        this.main.setError(error.message ?? error);
-        this.followers = [];
-        this.loading = false;
-      }
-    };
+      };
 
-    recursive();
+      recursive();
+    });
   };
 
   @action cleanFollowersList = () => {

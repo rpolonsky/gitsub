@@ -36,15 +36,6 @@ const Unsubscribe = () => {
     setUnfollowList(subscribe.following);
   }, [subscribe.loading]);
 
-  /* uncheck my followers */
-  useEffect(() => {
-    if (followers.loading || !followers.followers.length) {
-      return;
-    }
-    const newList = diffBy(unfollowList, followers.followers, user => user.login);
-    setUnfollowList(newList);
-  }, [followers.loading]);
-
   /* uncheck users with more than 'minFollowers' followers */
   useEffect(() => {
     const extendedInfoItems = Object.values(users.extendedInfo);
@@ -115,7 +106,10 @@ const Unsubscribe = () => {
           <button
             onClick={async () => {
               /* load/update followers list */
-              followers.getUserFollowersList(username, username, token);
+              await followers.getUserFollowersList(username, username, token);
+              /* uncheck my followers */
+              const newList = diffBy(unfollowList, followers.followers, user => user.login);
+              setUnfollowList(newList);
             }}
             disabled={followers.loading || users.loading}
           >
