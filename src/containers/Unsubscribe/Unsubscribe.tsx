@@ -36,20 +36,6 @@ const Unsubscribe = () => {
     setUnfollowList(subscribe.following);
   }, [subscribe.loading]);
 
-  /* uncheck users with more than 'minFollowers' followers */
-  useEffect(() => {
-    const extendedInfoItems = Object.values(users.extendedInfo);
-
-    if (users.loading || !extendedInfoItems.length) {
-      return;
-    }
-    const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
-    const muchFollowed = extendedInfoItems.filter(user => user.followers >= minFollowers);
-
-    const list = diffBy(unfollowList, [...noExtInfo, ...muchFollowed], user => user.login);
-    setUnfollowList(list);
-  }, [users.loading]);
-
   /* send impression event */
   useEffect(() => {
     subscribe.resetFollowingList();
@@ -116,9 +102,20 @@ const Unsubscribe = () => {
             Uncheck my followers <br /> (will load your followers list)
           </button>
           <button
-            onClick={() => {
+            onClick={async () => {
               /* load/update extended user info */
-              users.getUsersExtendedInfo(unfollowList, username, token);
+              await users.getUsersExtendedInfo(unfollowList, username, token);
+              /* uncheck users with more than 'minFollowers' followers */
+              const extendedInfoItems = Object.values(users.extendedInfo);
+              const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
+              const muchFollowed = extendedInfoItems.filter(user => user.followers >= minFollowers);
+
+              const list = diffBy(
+                unfollowList,
+                [...noExtInfo, ...muchFollowed],
+                user => user.login,
+              );
+              setUnfollowList(list);
             }}
             disabled={followers.loading || users.loading}
           >

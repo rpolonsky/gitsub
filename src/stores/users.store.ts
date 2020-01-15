@@ -14,7 +14,6 @@ interface Users {
   loading: boolean;
 }
 
-const TIMEOUT = 0;
 const CACHE_LIFETIME_DAYS = 7;
 const EXT_INFO_STORAGE_KEY = 'userExtendedInfo';
 const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
@@ -29,39 +28,39 @@ class UsersStore implements Users {
   constructor(mainStore: MainStore) {
     this.main = mainStore;
   }
-  @action getUsersExtendedInfo = async (users: UserInfo[], username: string, token: string) => {
-    const targets = [...users];
-    this.loading = true;
-
-    const recursive = async () => {
+  @action getUsersExtendedInfo = (
+    users: UserInfo[],
+    username: string,
+    token: string,
+  ): Promise<UsersExtendedInfo> => {
+    return new Promise((resolve, reject) => {
       try {
-        this.currentTarget = targets.shift();
+        const targets = [...users];
+        let targetsLeft = targets.length;
+        this.loading = true;
 
-        if (!this.currentTarget) {
-          return;
-        }
+        targets.forEach(async currentTarget => {
+          const userInfo = await this.getUserExtendedInfo(currentTarget.login, username, token);
+          this.currentTarget = currentTarget;
+          targetsLeft--;
 
-        const userInfo = await this.getUserExtendedInfo(this.currentTarget.login, username, token);
+          if (userInfo) {
+            this.extendedInfo[userInfo.login] = userInfo;
+          }
 
-        if (userInfo) {
-          this.extendedInfo[userInfo.login] = userInfo;
-        }
-
-        if (targets.length) {
-          setTimeout(() => {
-            recursive();
-          }, TIMEOUT);
-        } else {
-          this.storeUsersExtendedInfo(this.extendedInfo);
-          this.loading = false;
-        }
+          if (!targetsLeft) {
+            this.storeUsersExtendedInfo(this.extendedInfo);
+            this.loading = false;
+            resolve(this.extendedInfo);
+          }
+        });
       } catch (error) {
         console.error('error', error);
         this.main.setError(error.message ?? error);
         this.loading = false;
+        reject(error);
       }
-    };
-    recursive();
+    });
   };
 
   @action getUserExtendedInfo = async (

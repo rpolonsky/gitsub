@@ -34,27 +34,16 @@ const Subscribe = () => {
   const readyToProcess = !!following.length && !loading && !processing;
 
   useEffect(() => {
+    if (loading) {
+      return;
+    }
     setFollowList(following);
-  }, [following]);
+  }, [following, loading]);
 
   useEffect(() => {
     resetFollowingList();
     gtag('event', 'impression', { event_category: 'subscribe' });
   }, []);
-
-  /* uncheck users with less than 'minFollowings' followings */
-  useEffect(() => {
-    const extendedInfoItems = Object.values(users.extendedInfo);
-
-    if (users.loading || !extendedInfoItems.length) {
-      return;
-    }
-    const noExtInfo = diffBy(followList, extendedInfoItems, user => user.login);
-    const notMuchFollowing = extendedInfoItems.filter(user => user.following < minFollowings);
-
-    const list = diffBy(followList, [...noExtInfo, ...notMuchFollowing], user => user.login);
-    setFollowList(list);
-  }, [users.loading]);
 
   return (
     <>
@@ -91,9 +80,22 @@ const Subscribe = () => {
       {readyToProcess && (
         <Section title="some helpers for you">
           <button
-            onClick={() => {
+            onClick={async () => {
               /* load/update extended user info */
-              users.getUsersExtendedInfo(followList, username, token);
+              await users.getUsersExtendedInfo(followList, username, token);
+              /* uncheck users with less than 'minFollowings' followings */
+              const extendedInfoItems = Object.values(users.extendedInfo);
+              const noExtInfo = diffBy(followList, extendedInfoItems, user => user.login);
+              const notMuchFollowing = extendedInfoItems.filter(
+                user => user.following < minFollowings,
+              );
+
+              const list = diffBy(
+                followList,
+                [...noExtInfo, ...notMuchFollowing],
+                user => user.login,
+              );
+              setFollowList(list);
             }}
             disabled={loading || users.loading}
           >
