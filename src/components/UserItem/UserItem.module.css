@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
   padding: 5px;
   margin: 2px 0;
   border: 1px solid #efefef;
@@ -41,6 +42,17 @@
 .followed {
   font-size: 6px;
   color: #aaa;
+}
+.pending {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 @media only screen and (max-width: 480px) {

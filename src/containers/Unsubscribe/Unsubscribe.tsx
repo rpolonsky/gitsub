@@ -141,9 +141,6 @@ const Unsubscribe = () => {
           {followers.loading && (
             <div className={s.row}>Loading your followers (page #{followers.page})...</div>
           )}
-          {users.loading && users.currentTarget && (
-            <div className={s.row}>Loading extended info about {users.currentTarget.login}...</div>
-          )}
         </Section>
       )}
 
@@ -175,6 +172,7 @@ const Unsubscribe = () => {
             key={user.login}
             user={user}
             extended={users.extendedInfo[user.login]}
+            pending={users.currentTargets[user.login]}
             checked={unfollowList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
               const currentIndex = unfollowList.findIndex(u => u.login === user.login);

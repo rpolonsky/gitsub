@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-
+import Spinner from '../Spinner/Spinner';
 import { UserInfo, UserExtendedInfo } from '../../types';
 
 import s from './UserItem.module.css';
@@ -13,6 +13,7 @@ type Props = {
   withCheckbox?: boolean;
   disabled?: boolean;
   followed?: boolean;
+  pending?: boolean;
   className?: string;
 };
 
@@ -24,6 +25,7 @@ const UserItem = ({
   disabled,
   followed,
   checked,
+  pending,
   withCheckbox,
 }: Props) => {
   const handleClick = !disabled ? onClick : undefined;
@@ -38,6 +40,11 @@ const UserItem = ({
       )}
       onClick={handleClick}
     >
+      {pending && (
+        <div className={s.pending}>
+          <Spinner />
+        </div>
+      )}
       {withCheckbox && (
         <input
           type="checkbox"

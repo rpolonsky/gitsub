@@ -10,7 +10,7 @@ type UsersExtendedInfo = { [login: string]: UserExtendedInfo };
 
 interface Users {
   extendedInfo: UsersExtendedInfo;
-  currentTarget?: UserInfo;
+  currentTargets: { [login: string]: boolean };
   loading: boolean;
 }
 
@@ -22,7 +22,7 @@ class UsersStore implements Users {
   private main: MainStore;
 
   @observable extendedInfo: UsersExtendedInfo = {};
-  @observable currentTarget?: UserInfo = undefined;
+  @observable currentTargets: { [login: string]: boolean } = {};
   @observable loading = false;
 
   constructor(mainStore: MainStore) {
@@ -41,7 +41,6 @@ class UsersStore implements Users {
 
         targets.forEach(async currentTarget => {
           const userInfo = await this.getUserExtendedInfo(currentTarget.login, username, token);
-          this.currentTarget = currentTarget;
           targetsLeft--;
 
           if (userInfo) {
@@ -69,6 +68,7 @@ class UsersStore implements Users {
     token: string,
   ): Promise<UserExtendedInfo | null> => {
     try {
+      this.currentTargets[targetUsername] = true;
       const stored =
         this.extendedInfo[targetUsername] || (await this.getStoredExtendedInfo(targetUsername));
 
@@ -77,6 +77,7 @@ class UsersStore implements Users {
         stored.stored_at &&
         diffDays(new Date(), new Date(stored.stored_at)) <= CACHE_LIFETIME_DAYS
       ) {
+        this.currentTargets[targetUsername] = false;
         return stored;
       }
 
@@ -94,6 +95,7 @@ class UsersStore implements Users {
         event_value: targetUsername,
       });
       this.main.setRemainingRateLimit(headers);
+      this.currentTargets[targetUsername] = false;
 
       return data;
     } catch (error) {

@@ -117,10 +117,6 @@ const Subscribe = () => {
               }}
             />
           </div>
-
-          {users.loading && users.currentTarget && (
-            <div>Loading extended info about {users.currentTarget.login}...</div>
-          )}
         </Section>
       )}
 
@@ -153,6 +149,7 @@ const Subscribe = () => {
             disabled={processing}
             followed={storedFollowedUsers.indexOf(user.login) !== -1}
             extended={users.extendedInfo[user.login]}
+            pending={users.currentTargets[user.login]}
             user={user}
             checked={followList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
