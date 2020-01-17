@@ -58,6 +58,10 @@ const Subscribe = () => {
           onKeyUp={e => {
             if (e.keyCode === 13) {
               getUserFollowingList(sourceUsername, username, token);
+              gtag('event', 'load-connections', {
+                event_category: 'subscribe',
+                event_label: sourceUsername,
+              });
             }
           }}
           onFocus={() => gtag('event', 'user-input-focus', { event_category: 'subscribe' })}

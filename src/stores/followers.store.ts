@@ -68,10 +68,6 @@ class FollowersStore implements Followers {
           } else {
             this.loading = false;
             resolve(this.followers);
-            gtag('event', 'load-followers', {
-              event_category: 'followers',
-              event_label: targetUser,
-            });
           }
         } catch (error) {
           console.error('error', error);

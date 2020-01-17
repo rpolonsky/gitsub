@@ -60,6 +60,10 @@ const Followers = () => {
           onKeyUp={e => {
             if (e.keyCode === 13) {
               getUserFollowersList(targetUsername, username, token);
+              gtag('event', 'load-followers', {
+                event_category: 'followers',
+                event_label: targetUsername,
+              });
             }
           }}
           onFocus={() => gtag('event', 'user-input-focus', { event_category: 'followers' })}
@@ -68,6 +72,10 @@ const Followers = () => {
           <button
             onClick={() => {
               getUserFollowersList(targetUsername, username, token);
+              gtag('event', 'load-followers', {
+                event_category: 'followers',
+                event_label: targetUsername,
+              });
             }}
             disabled={loading || !targetUsername.length}
           >
