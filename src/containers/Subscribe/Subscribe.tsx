@@ -154,7 +154,7 @@ const Subscribe = () => {
             extended={users.extendedInfo[user.login]}
             pending={users.currentTargets[user.login] || currentTargets[user.login]}
             user={user}
-            checked={followList.findIndex(u => u.login === user.login) !== -1 || !user.processed}
+            checked={followList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
               const currentIndex = followList.findIndex(u => u.login === user.login);
               const newFollowList = [...followList];

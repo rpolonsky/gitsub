@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import MainStore from './main.store';
 import { UserInfo } from '../types';
+import { sleepAsync } from '../utils';
 
 interface Subscribe {
   storedFollowedUsers: string[];
@@ -16,6 +17,9 @@ interface Subscribe {
   processing: boolean;
 }
 
+const MIN_TIMEOUT = 20;
+const MAX_TIMEOUT = 500;
+const MAX_SIMULTANEOUS_REQUESTS = 5;
 const MAX_PAGE_LIMIT = 0;
 const FOLLOWED_USERS_STORAGE_KEY = '_followedUsers';
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
@@ -93,13 +97,13 @@ class SubscribeStore implements Subscribe {
     recursive();
   };
   @action followUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const processed: string[] = [];
       const targets = [...users];
       this.targets = targets.length;
       this.processing = true;
 
-      targets.forEach(async currentTarget => {
+      const followUser = async (currentTarget: UserInfo) => {
         try {
           this.currentTargets[currentTarget.login] = true;
           const { headers } = await axios.put(
@@ -136,7 +140,14 @@ class SubscribeStore implements Subscribe {
           this.currentTargets[currentTarget.login] = false;
           reject(error);
         }
-      });
+      };
+
+      for (let i = 0; i < targets.length; i++) {
+        const requestCount = Object.values(this.currentTargets).filter(i => i).length;
+        const currentTarget = targets[i];
+        followUser(currentTarget);
+        await sleepAsync(requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT);
+      }
     });
   };
 
