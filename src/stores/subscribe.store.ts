@@ -9,14 +9,13 @@ import { UserInfo } from '../types';
 interface Subscribe {
   storedFollowedUsers: string[];
   following: UserInfo[];
-  targets: UserInfo[];
-  currentTarget?: UserInfo;
+  targets: number;
+  currentTargets: { [login: string]: boolean };
   page: number;
   loading: boolean;
   processing: boolean;
 }
 
-const TIMEOUT = 0;
 const MAX_PAGE_LIMIT = 0;
 const FOLLOWED_USERS_STORAGE_KEY = '_followedUsers';
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
@@ -27,8 +26,8 @@ class SubscribeStore implements Subscribe {
 
   @observable storedFollowedUsers: string[] = [];
   @observable following: UserInfo[] = [];
-  @observable targets: UserInfo[] = [];
-  @observable currentTarget?: UserInfo = undefined;
+  @observable targets: number = 0;
+  @observable currentTargets: { [login: string]: boolean } = {};
   @observable loading = false;
   @observable processing = false;
   @observable page = 1;
@@ -70,7 +69,7 @@ class SubscribeStore implements Subscribe {
 
         if (result?.data?.length && (!pageLimit || this.page < pageLimit)) {
           this.page++;
-          setTimeout(() => recursive(), TIMEOUT);
+          recursive();
         } else {
           this.loading = false;
 
@@ -93,51 +92,52 @@ class SubscribeStore implements Subscribe {
 
     recursive();
   };
-  @action followUsers = (users: UserInfo[], username: string, token: string) => {
-    this.processing = true;
-    this.targets = [...users];
+  @action followUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+      const processed: string[] = [];
+      const targets = [...users];
+      this.targets = targets.length;
+      this.processing = true;
 
-    const recursive = async () => {
-      try {
-        this.currentTarget = this.targets.shift();
-
-        if (!this.currentTarget) {
-          return;
-        }
-
-        const { headers } = await axios.put(
-          GH_FOLLOW_URL_TEMPLATE.replace('%USERNAME%', this.currentTarget.login),
-          {},
-          {
-            auth: {
-              username,
-              password: token,
+      targets.forEach(async currentTarget => {
+        try {
+          this.currentTargets[currentTarget.login] = true;
+          const { headers } = await axios.put(
+            GH_FOLLOW_URL_TEMPLATE.replace('%USERNAME%', currentTarget.login),
+            {},
+            {
+              auth: {
+                username,
+                password: token,
+              },
             },
-          },
-        );
-        gtag('event', 'follow-user', {
-          event_category: 'subscribe',
-          event_value: this.currentTarget.login,
-        });
+          );
+          processed.push(currentTarget.login);
+          this.targets--;
+          gtag('event', 'follow-user', {
+            event_category: 'subscribe',
+            event_value: currentTarget.login,
+          });
+          this.main.setRemainingRateLimit(headers);
+          currentTarget.processed = true;
+          this.currentTargets[currentTarget.login] = false;
 
-        this.storeFollowedUsers(this.currentTarget.login, username);
-        this.main.setRemainingRateLimit(headers);
-        this.currentTarget.processed = true;
-
-        if (this.targets.length) {
-          setTimeout(() => {
-            recursive();
-          }, TIMEOUT);
-        } else {
-          this.processing = false;
+          if (!this.targets) {
+            this.storeFollowedUsers(
+              targets.map(u => u.login),
+              username,
+            );
+            this.processing = false;
+            resolve(processed);
+          }
+        } catch (error) {
+          console.error('error', error);
+          this.main.setError(error.message ?? error);
+          this.currentTargets[currentTarget.login] = false;
+          reject(error);
         }
-      } catch (error) {
-        console.error('error', error);
-        this.main.setError(error.message ?? error);
-        this.processing = false;
-      }
-    };
-    recursive();
+      });
+    });
   };
 
   @action storeFollowedUsers = async (followedUsers: string[] | string, username: string) => {

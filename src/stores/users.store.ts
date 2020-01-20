@@ -34,31 +34,24 @@ class UsersStore implements Users {
     token: string,
   ): Promise<UsersExtendedInfo> => {
     return new Promise((resolve, reject) => {
-      try {
-        const targets = [...users];
-        let targetsLeft = targets.length;
-        this.loading = true;
+      const targets = [...users];
+      let targetsLeft = targets.length;
+      this.loading = true;
 
-        targets.forEach(async currentTarget => {
-          const userInfo = await this.getUserExtendedInfo(currentTarget.login, username, token);
-          targetsLeft--;
+      targets.forEach(async currentTarget => {
+        const userInfo = await this.getUserExtendedInfo(currentTarget.login, username, token);
+        targetsLeft--;
 
-          if (userInfo) {
-            this.extendedInfo[userInfo.login] = userInfo;
-          }
+        if (userInfo) {
+          this.extendedInfo[userInfo.login] = userInfo;
+        }
 
-          if (!targetsLeft) {
-            this.storeUsersExtendedInfo(this.extendedInfo);
-            this.loading = false;
-            resolve(this.extendedInfo);
-          }
-        });
-      } catch (error) {
-        console.error('error', error);
-        this.main.setError(error.message ?? error);
-        this.loading = false;
-        reject(error);
-      }
+        if (!targetsLeft) {
+          this.storeUsersExtendedInfo(this.extendedInfo);
+          this.loading = false;
+          resolve(this.extendedInfo);
+        }
+      });
     });
   };
 
@@ -101,6 +94,7 @@ class UsersStore implements Users {
     } catch (error) {
       console.error('error', error);
       this.main.setError(error.message ?? error);
+      this.currentTargets[targetUsername] = false;
       return null;
     }
   };

@@ -22,7 +22,7 @@ const Subscribe = () => {
       storedFollowedUsers,
       following,
       targets,
-      currentTarget,
+      currentTargets,
       loading,
       processing,
       page,
@@ -124,10 +124,9 @@ const Subscribe = () => {
         </Section>
       )}
 
-      {processing && currentTarget && (
+      {processing && targets && (
         <Section>
-          <div>{targets.length} targets left</div>
-          <div>Current target {currentTarget.login}</div>
+          <div>{targets} targets left</div>
         </Section>
       )}
 
@@ -153,9 +152,9 @@ const Subscribe = () => {
             disabled={processing}
             followed={storedFollowedUsers.indexOf(user.login) !== -1}
             extended={users.extendedInfo[user.login]}
-            pending={users.currentTargets[user.login]}
+            pending={users.currentTargets[user.login] || currentTargets[user.login]}
             user={user}
-            checked={followList.findIndex(u => u.login === user.login) !== -1}
+            checked={followList.findIndex(u => u.login === user.login) !== -1 || !user.processed}
             onClick={() => {
               const currentIndex = followList.findIndex(u => u.login === user.login);
               const newFollowList = [...followList];
