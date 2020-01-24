@@ -20,6 +20,7 @@ const Subscribe = () => {
       resetFollowingList,
       followUsers,
       storedFollowedUsers,
+      removeFromFollowingList,
       following,
       targets,
       currentTargets,
@@ -38,7 +39,7 @@ const Subscribe = () => {
       return;
     }
     setFollowList(following);
-  }, [following, loading]);
+  }, [following.length, loading]);
 
   useEffect(() => {
     resetFollowingList();
@@ -106,6 +107,22 @@ const Subscribe = () => {
             Uncheck users who follows less than {minFollowings} users <br /> (caution: time
             consuming operation)
           </button>
+          <button
+            onClick={() => {
+              setFollowList(following);
+            }}
+            disabled={loading || users.loading}
+          >
+            Check all
+          </button>
+          <button
+            onClick={() => {
+              setFollowList([]);
+            }}
+            disabled={loading || users.loading}
+          >
+            Uncheck all
+          </button>
           <div>
             <label htmlFor="minFollowings">Minimal number of followings:</label>
             <input
@@ -134,9 +151,10 @@ const Subscribe = () => {
         {!following.length && !loading && 'yet empty...'}
         {!!following.length && (
           <button
-            onClick={() => {
-              followUsers(followList, username, token);
+            onClick={async () => {
               gtag('event', 'follow-users', { event_category: 'subscribe' });
+              const processed = await followUsers(followList, username, token);
+              removeFromFollowingList(processed);
             }}
             disabled={loading || processing}
           >

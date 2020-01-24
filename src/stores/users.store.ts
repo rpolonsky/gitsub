@@ -33,9 +33,15 @@ class UsersStore implements Users {
     username: string,
     token: string,
   ): Promise<UsersExtendedInfo> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const targets = [...users];
       let targetsLeft = targets.length;
+
+      if (!targetsLeft) {
+        resolve(this.extendedInfo);
+        return;
+      }
+
       this.loading = true;
 
       targets.forEach(async currentTarget => {

@@ -34,7 +34,7 @@ const Unsubscribe = () => {
       return;
     }
     setUnfollowList(subscribe.following);
-  }, [subscribe.loading]);
+  }, [subscribe.loading, subscribe.following.length]);
 
   /* send impression event */
   useEffect(() => {
@@ -122,6 +122,22 @@ const Unsubscribe = () => {
             Uncheck users with more than {minFollowers} followers <br /> (caution: time consuming
             operation)
           </button>
+          <button
+            onClick={() => {
+              setUnfollowList(subscribe.following);
+            }}
+            disabled={followers.loading || users.loading}
+          >
+            Check all
+          </button>
+          <button
+            onClick={() => {
+              setUnfollowList([]);
+            }}
+            disabled={followers.loading || users.loading}
+          >
+            Uncheck all
+          </button>
           <div>
             <label htmlFor="minFollowers">Minimal number of followers:</label>
             <input
@@ -153,9 +169,10 @@ const Unsubscribe = () => {
       <Section title="list of users that you follow">
         {!!subscribe.following.length && (
           <button
-            onClick={() => {
-              unsubscribe.unfollowUsers(unfollowList, username, token);
+            onClick={async () => {
               gtag('event', 'unfollow-users', { event_category: 'unsubscribe' });
+              const processed = await unsubscribe.unfollowUsers(unfollowList, username, token);
+              subscribe.removeFromFollowingList(processed);
             }}
             disabled={followers.loading || subscribe.loading || unsubscribe.processing}
           >
@@ -170,6 +187,7 @@ const Unsubscribe = () => {
             withCheckbox
             key={user.login}
             user={user}
+            disabled={followers.loading || subscribe.loading || unsubscribe.processing}
             extended={users.extendedInfo[user.login]}
             pending={users.currentTargets[user.login] || unsubscribe.currentTargets[user.login]}
             checked={unfollowList.findIndex(u => u.login === user.login) !== -1}

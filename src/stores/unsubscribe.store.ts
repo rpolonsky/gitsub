@@ -30,11 +30,21 @@ class UnsubscribeStore implements Unsubscribe {
     this.main = mainStore;
   }
 
-  @action unfollowUsers = (users: UserInfo[], username: string, token: string) => {
+  @action unfollowUsers = (
+    users: UserInfo[],
+    username: string,
+    token: string,
+  ): Promise<string[]> => {
     return new Promise(async (resolve, reject) => {
       const processed: string[] = [];
       const targets = [...users];
       this.targets = targets.length;
+
+      if (!this.targets) {
+        resolve(processed);
+        return;
+      }
+
       this.processing = true;
 
       const unfollowUser = async (currentTarget: UserInfo) => {

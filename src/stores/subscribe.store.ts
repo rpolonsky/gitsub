@@ -17,7 +17,7 @@ interface Subscribe {
   processing: boolean;
 }
 
-const MIN_TIMEOUT = 20;
+const MIN_TIMEOUT = 50;
 const MAX_TIMEOUT = 500;
 const MAX_SIMULTANEOUS_REQUESTS = 5;
 const MAX_PAGE_LIMIT = 0;
@@ -101,6 +101,12 @@ class SubscribeStore implements Subscribe {
       const processed: string[] = [];
       const targets = [...users];
       this.targets = targets.length;
+
+      if (!this.targets) {
+        resolve(processed);
+        return;
+      }
+
       this.processing = true;
 
       const followUser = async (currentTarget: UserInfo) => {
@@ -173,6 +179,10 @@ class SubscribeStore implements Subscribe {
 
   @action resetFollowingList = () => {
     this.following = [];
+  };
+
+  @action removeFromFollowingList = (logins: string[]) => {
+    this.following = this.following.filter(user => !logins.includes(user.login));
   };
 }
 
