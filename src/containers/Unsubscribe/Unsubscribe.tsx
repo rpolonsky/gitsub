@@ -144,10 +144,9 @@ const Unsubscribe = () => {
         </Section>
       )}
 
-      {unsubscribe.processing && unsubscribe.currentTarget && (
+      {unsubscribe.processing && unsubscribe.targets && (
         <Section>
-          <div>{unsubscribe.targets.length} targets left</div>
-          <div>Current target {unsubscribe.currentTarget.login}</div>
+          <div>{unsubscribe.targets} targets left</div>
         </Section>
       )}
 
@@ -172,7 +171,7 @@ const Unsubscribe = () => {
             key={user.login}
             user={user}
             extended={users.extendedInfo[user.login]}
-            pending={users.currentTargets[user.login]}
+            pending={users.currentTargets[user.login] || unsubscribe.currentTargets[user.login]}
             checked={unfollowList.findIndex(u => u.login === user.login) !== -1}
             onClick={() => {
               const currentIndex = unfollowList.findIndex(u => u.login === user.login);

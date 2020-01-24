@@ -14,7 +14,6 @@ interface Followers {
   saving: boolean;
 }
 
-const TIMEOUT = 0;
 const MAX_PAGE_LIMIT = 0;
 const GH_FOLLOWERS_URL_TEMPLATE = '/api/gh/users/%USERNAME%/followers?page=%PAGE%';
 
@@ -64,7 +63,7 @@ class FollowersStore implements Followers {
 
           if (result?.data?.length && (!MAX_PAGE_LIMIT || this.page < MAX_PAGE_LIMIT)) {
             this.page++;
-            setTimeout(() => recursive(), TIMEOUT);
+            recursive();
           } else {
             this.loading = false;
             resolve(this.followers);
