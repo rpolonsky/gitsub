@@ -28,14 +28,6 @@ const Unsubscribe = () => {
   const readyToProcess =
     !!subscribe.following.length && !subscribe.loading && !unsubscribe.processing;
 
-  /* update local list of users to unfollow */
-  useEffect(() => {
-    if (subscribe.loading || !subscribe.following.length) {
-      return;
-    }
-    setUnfollowList(subscribe.following);
-  }, [subscribe.loading, subscribe.following.length]);
-
   /* send impression event */
   useEffect(() => {
     subscribe.resetFollowingList();
@@ -51,17 +43,19 @@ const Unsubscribe = () => {
             <div className={s.row}>Please pay attention to [your credentials] form</div>
           </>
         ) : (
-          <>You're all set to load your list of followed users</>
+          <>Ready to load your list of followed users</>
         )}
         <div className={s.row}>
           <button
-            onClick={() => {
+            onClick={async () => {
               setUnfollowList([]);
-              subscribe.getUserFollowingList(username, username, token, +pageLimit);
               gtag('event', 'load-my-connections', {
                 event_category: 'unsubscribe',
                 event_label: username,
               });
+              await subscribe.getUserFollowingList(username, username, token, +pageLimit);
+              /* update local list of users to unfollow */
+              setUnfollowList(subscribe.following);
             }}
             disabled={subscribe.loading || noCredentials}
           >

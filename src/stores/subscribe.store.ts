@@ -45,57 +45,61 @@ class SubscribeStore implements Subscribe {
     username: string,
     token: string,
     pageLimit = MAX_PAGE_LIMIT,
-  ) => {
-    this.loading = true;
-    this.page = 1;
-    this.following = [];
+  ): Promise<UserInfo[]> =>
+    new Promise((resolve, reject) => {
+      this.loading = true;
+      this.page = 1;
+      this.following = [];
 
-    const recursive = async () => {
-      try {
-        const result = await axios.get(
-          GH_FOLLOWING_URL_TEMPLATE.replace('%USERNAME%', targetUser).replace(
-            '%PAGE%',
-            String(this.page),
-          ),
-          {
-            auth: {
-              username,
-              password: token,
+      const recursive = async () => {
+        try {
+          const result = await axios.get(
+            GH_FOLLOWING_URL_TEMPLATE.replace('%USERNAME%', targetUser).replace(
+              '%PAGE%',
+              String(this.page),
+            ),
+            {
+              auth: {
+                username,
+                password: token,
+              },
             },
-          },
-        );
+          );
 
-        if (result?.data?.length) {
-          this.following.push(...result.data);
-        }
-
-        this.main.setRemainingRateLimit(result.headers);
-
-        if (result?.data?.length && (!pageLimit || this.page < pageLimit)) {
-          this.page++;
-          recursive();
-        } else {
-          this.loading = false;
-
-          /* store user's own subscription list  */
-          if (targetUser === username) {
-            await this.storeFollowedUsers(
-              this.following.map(u => u.login),
-              targetUser,
-            );
+          if (result?.data?.length) {
+            this.following.push(...result.data);
           }
-          await this.loadStoredFollowedUsers(username);
-        }
-      } catch (error) {
-        console.error('error', error);
-        this.main.setError(error.message ?? error);
-        this.following = [];
-        this.loading = false;
-      }
-    };
 
-    recursive();
-  };
+          this.main.setRemainingRateLimit(result.headers);
+
+          if (result?.data?.length && (!pageLimit || this.page < pageLimit)) {
+            this.page++;
+            recursive();
+          } else {
+            this.loading = false;
+
+            /* store user's own subscription list  */
+            if (targetUser === username) {
+              await this.storeFollowedUsers(
+                this.following.map(u => u.login),
+                targetUser,
+              );
+            }
+            await this.loadStoredFollowedUsers(username);
+
+            resolve(this.following);
+          }
+        } catch (error) {
+          console.error('error', error);
+          this.main.setError(error.message ?? error);
+          this.following = [];
+          this.loading = false;
+          reject(error);
+        }
+      };
+
+      recursive();
+    });
   @action followUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> => {
     return new Promise(async (resolve, reject) => {
       const processed: string[] = [];
