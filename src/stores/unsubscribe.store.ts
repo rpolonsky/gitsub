@@ -30,12 +30,8 @@ class UnsubscribeStore implements Unsubscribe {
     this.main = mainStore;
   }
 
-  @action unfollowUsers = (
-    users: UserInfo[],
-    username: string,
-    token: string,
-  ): Promise<string[]> => {
-    return new Promise(async (resolve, reject) => {
+  @action unfollowUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> =>
+    new Promise(async (resolve, reject) => {
       const processed: string[] = [];
       const targets = [...users];
       this.targets = targets.length;
@@ -88,7 +84,6 @@ class UnsubscribeStore implements Unsubscribe {
         await sleepAsync(requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT);
       }
     });
-  };
 }
 
 export default UnsubscribeStore;

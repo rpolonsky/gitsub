@@ -33,8 +33,8 @@ class FollowersStore implements Followers {
     targetUser: string,
     username: string,
     token: string,
-  ): Promise<UserInfo[]> => {
-    return new Promise((resolve, reject) => {
+  ): Promise<UserInfo[]> =>
+    new Promise((resolve, reject) => {
       this.loading = true;
       this.page = 1;
       this.followers = [];
@@ -79,7 +79,6 @@ class FollowersStore implements Followers {
 
       recursive();
     });
-  };
 
   @action cleanFollowersList = () => {
     this.followers = [];

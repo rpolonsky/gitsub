@@ -32,8 +32,8 @@ class UsersStore implements Users {
     users: UserInfo[],
     username: string,
     token: string,
-  ): Promise<UsersExtendedInfo> => {
-    return new Promise(resolve => {
+  ): Promise<UsersExtendedInfo> =>
+    new Promise(resolve => {
       const targets = [...users];
       let targetsLeft = targets.length;
 
@@ -59,7 +59,6 @@ class UsersStore implements Users {
         }
       });
     });
-  };
 
   @action getUserExtendedInfo = async (
     targetUsername: string,

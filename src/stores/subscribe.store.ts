@@ -100,8 +100,9 @@ class SubscribeStore implements Subscribe {
 
       recursive();
     });
-  @action followUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> => {
-    return new Promise(async (resolve, reject) => {
+
+  @action followUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> =>
+    new Promise(async (resolve, reject) => {
       const processed: string[] = [];
       const targets = [...users];
       this.targets = targets.length;
@@ -159,7 +160,6 @@ class SubscribeStore implements Subscribe {
         await sleepAsync(requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT);
       }
     });
-  };
 
   @action storeFollowedUsers = async (followedUsers: string[] | string, username: string) => {
     try {
