@@ -4,16 +4,20 @@ import axios from 'axios';
 
 import MainStore from './main.store';
 import { UserInfo, UserExtendedInfo } from '../types';
-import { diffDays } from '../utils';
+import { diffDays, sleepAsync } from '../utils';
 
 type UsersExtendedInfo = { [login: string]: UserExtendedInfo };
 
 interface Users {
+  targets: number;
   extendedInfo: UsersExtendedInfo;
   currentTargets: { [login: string]: boolean };
   loading: boolean;
 }
 
+const MIN_TIMEOUT = 20;
+const MAX_TIMEOUT = 500;
+const MAX_SIMULTANEOUS_REQUESTS = 5;
 const CACHE_LIFETIME_DAYS = 7;
 const EXT_INFO_STORAGE_KEY = 'userExtendedInfo';
 const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
@@ -21,6 +25,7 @@ const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
 class UsersStore implements Users {
   private main: MainStore;
 
+  @observable targets: number = 0;
   @observable extendedInfo: UsersExtendedInfo = {};
   @observable currentTargets: { [login: string]: boolean } = {};
   @observable loading = false;
@@ -33,31 +38,38 @@ class UsersStore implements Users {
     username: string,
     token: string,
   ): Promise<UsersExtendedInfo> =>
-    new Promise(resolve => {
+    new Promise(async resolve => {
       const targets = [...users];
-      let targetsLeft = targets.length;
+      this.targets = targets.length;
 
-      if (!targetsLeft) {
+      if (!this.targets) {
         resolve(this.extendedInfo);
         return;
       }
 
       this.loading = true;
 
-      targets.forEach(async currentTarget => {
+      const getInfo = async (currentTarget: UserInfo) => {
         const userInfo = await this.getUserExtendedInfo(currentTarget.login, username, token);
-        targetsLeft--;
+        this.targets--;
 
         if (userInfo) {
           this.extendedInfo[userInfo.login] = userInfo;
         }
 
-        if (!targetsLeft) {
+        if (!this.targets) {
           this.storeUsersExtendedInfo(this.extendedInfo);
           this.loading = false;
           resolve(this.extendedInfo);
         }
-      });
+      };
+
+      for (let i = 0; i < targets.length; i++) {
+        const requestCount = Object.values(this.currentTargets).filter(i => i).length;
+        const currentTarget = targets[i];
+        getInfo(currentTarget);
+        await sleepAsync(requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT);
+      }
     });
 
   @action getUserExtendedInfo = async (

@@ -104,8 +104,7 @@ const Subscribe = () => {
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users who follows less than {minFollowings} users <br /> (caution: time
-            consuming operation)
+            Uncheck users who follows less than {minFollowings} users <br /> (caution: may quickly reach your requests limit)
           </button>
           <button
             onClick={() => {
@@ -143,7 +142,15 @@ const Subscribe = () => {
 
       {processing && targets && (
         <Section>
+          Following...
           <div>{targets} targets left</div>
+        </Section>
+      )}
+
+      {users.loading && users.targets && (
+        <Section>
+          Getting additional information...
+          <div>{users.targets} targets left</div>
         </Section>
       )}
 
