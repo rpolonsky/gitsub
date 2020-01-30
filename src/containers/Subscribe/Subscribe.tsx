@@ -14,6 +14,7 @@ const Subscribe = () => {
   const [followList, setFollowList] = useState<UserInfo[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
   const [minFollowings, setMinFollowings] = useState<string | number>(1);
+  const [coeffThreshold, setCoeffThreshold] = useState<string>('1.0');
   const {
     subscribe: {
       getUserFollowingList,
@@ -104,8 +105,40 @@ const Subscribe = () => {
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users who follows less than {minFollowings} users <br /> (caution: may quickly reach your requests limit)
+            Uncheck users who follows less than {minFollowings} users <br /> (caution: may quickly
+            reach your requests limit)
           </button>
+          <button
+            onClick={async () => {
+              /* load/update extended user info */
+              await users.getUsersExtendedInfo(followList, username, token);
+              /* uncheck users with low ratio */
+              const goodCoeffList = following.filter(user => {
+                const extInfo = users.extendedInfo[user.login];
+                if (!extInfo) {
+                  return true;
+                }
+                const { followers, following } = extInfo;
+                return following / followers > parseFloat(coeffThreshold);
+              });
+              setFollowList(goodCoeffList);
+            }}
+            disabled={loading || users.loading}
+          >
+            Uncheck users with bad Following/Followed ratio <br /> (caution: may quickly reach your
+            requests limit)
+          </button>
+
+          {!!storedFollowedUsers.length && (
+            <button
+              onClick={() => {
+                setFollowList(following.filter(user => !storedFollowedUsers.includes(user.login)));
+              }}
+              disabled={loading || users.loading}
+            >
+              Uncheck users who have already been followed
+            </button>
+          )}
           <button
             onClick={() => {
               setFollowList(following);
@@ -134,6 +167,21 @@ const Subscribe = () => {
               onChange={e => {
                 const val = +e.target.value;
                 setMinFollowings(val < 0 ? 0 : val);
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="coeffThreshold">Following/Followed coeff. threshold:</label>
+            <input
+              id="coeffThreshold"
+              className={s.coeffThresholdInput}
+              value={coeffThreshold}
+              onChange={e => {
+                const floatRegexp = /^[\d.]*$/;
+
+                if (floatRegexp.test(e.target.value)) {
+                  setCoeffThreshold(e.target.value);
+                }
               }}
             />
           </div>

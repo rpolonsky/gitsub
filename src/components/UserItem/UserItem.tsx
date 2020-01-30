@@ -70,6 +70,7 @@ const UserItem = ({
           <>
             <span>followed:{extended.followers}</span>
             <span>follows:{extended.following}</span>
+            <span>f/f ratio:{(extended.following / extended.followers).toFixed(1)}</span>
             <span>gists:{extended.public_gists}</span>
             <span>visited:{new Date(extended.updated_at).toLocaleDateString()}</span>
           </>

@@ -1,3 +1,4 @@
-.minFollowingsInput {
+.minFollowingsInput,
+.coeffThresholdInput {
   width: 55px;
 }
