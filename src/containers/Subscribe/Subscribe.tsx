@@ -9,11 +9,13 @@ import { useBaseStore } from '../../stores';
 import { UserInfo } from '../../types';
 
 import s from './Subscribe.module.css';
+import { diffDays } from '../../utils';
 
 const Subscribe = () => {
   const [followList, setFollowList] = useState<UserInfo[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
   const [minFollowings, setMinFollowings] = useState<string | number>(1);
+  const [lastVisitDays, setLastVisitDays] = useState<string | number>(10);
   const [coeffThreshold, setCoeffThreshold] = useState<string>('1.0');
   const {
     subscribe: {
@@ -113,7 +115,7 @@ const Subscribe = () => {
               /* load/update extended user info */
               await users.getUsersExtendedInfo(followList, username, token);
               /* uncheck users with low ratio */
-              const goodCoeffList = following.filter(user => {
+              const goodCoeffList = followList.filter(user => {
                 const extInfo = users.extendedInfo[user.login];
                 if (!extInfo) {
                   return true;
@@ -129,10 +131,30 @@ const Subscribe = () => {
             requests limit)
           </button>
 
+          <button
+            onClick={async () => {
+              /* load/update extended user info */
+              await users.getUsersExtendedInfo(followList, username, token);
+              /* uncheck users recent visitors */
+              const recentVisitors = followList.filter(user => {
+                const extInfo = users.extendedInfo[user.login];
+                if (!extInfo) {
+                  return true;
+                }
+
+                return diffDays(new Date(), new Date(extInfo.updated_at)) <= lastVisitDays;
+              });
+              setFollowList(recentVisitors);
+            }}
+            disabled={loading || users.loading}
+          >
+            Uncheck users who haven't visited more than {lastVisitDays} days
+          </button>
+
           {!!storedFollowedUsers.length && (
             <button
               onClick={() => {
-                setFollowList(following.filter(user => !storedFollowedUsers.includes(user.login)));
+                setFollowList(followList.filter(user => !storedFollowedUsers.includes(user.login)));
               }}
               disabled={loading || users.loading}
             >
@@ -182,6 +204,21 @@ const Subscribe = () => {
                 if (floatRegexp.test(e.target.value)) {
                   setCoeffThreshold(e.target.value);
                 }
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="lastVisitDays">Days after the last visit:</label>
+            <input
+              id="lastVisitDays"
+              className={s.lastVisitDaysInput}
+              value={lastVisitDays}
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onChange={e => {
+                const val = +e.target.value;
+                setLastVisitDays(val < 0 ? 0 : val);
               }}
             />
           </div>
