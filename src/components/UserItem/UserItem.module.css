@@ -38,6 +38,7 @@
 .state {
   font-size: 26px;
   font-weight: bold;
+  width: 5%;
 }
 .followed {
   font-size: 6px;
