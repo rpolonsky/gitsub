@@ -79,6 +79,11 @@ class UsersStore implements Users {
   ): Promise<UserExtendedInfo | null> => {
     try {
       this.currentTargets[targetUsername] = true;
+
+      if (!Object.keys(this.extendedInfo).length) {
+        await this.preloadExtendedInfo();
+      }
+
       const stored =
         this.extendedInfo[targetUsername] || (await this.getStoredExtendedInfo(targetUsername));
 
@@ -149,6 +154,17 @@ class UsersStore implements Users {
       console.error('error', error);
       this.main.setError(error.message ?? error);
       return undefined;
+    }
+  };
+
+  @action preloadExtendedInfo = async () => {
+    try {
+      const rawData = await localforage.getItem(EXT_INFO_STORAGE_KEY);
+      const storedData = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+      this.extendedInfo = storedData || {};
+    } catch (error) {
+      console.error('error', error);
+      this.main.setError(error.message ?? error);
     }
   };
 }
