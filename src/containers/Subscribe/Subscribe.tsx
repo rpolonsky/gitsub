@@ -12,6 +12,7 @@ import s from './Subscribe.module.css';
 import { diffDays } from '../../utils';
 
 const Subscribe = () => {
+  const [isHidden, setIsHidden] = useState<boolean>(false);
   const [followList, setFollowList] = useState<UserInfo[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
   const [minFollowings, setMinFollowings] = useState<string | number>(1);
@@ -240,7 +241,10 @@ const Subscribe = () => {
       )}
 
       <Section title="list of connections">
-        {!following.length && !loading && 'yet empty...'}
+        <button onClick={() => setIsHidden(!isHidden)} disabled={loading || processing}>
+          {isHidden ? 'Show users list' : 'Hide users list'}
+        </button>
+        {!following.length && !loading && !isHidden && 'yet empty...'}
         {!!following.length && (
           <button
             onClick={async () => {
@@ -255,29 +259,30 @@ const Subscribe = () => {
         )}
         {loading && `Loading page #${page}...`}
 
-        {following.map((user: UserInfo, index: number) => (
-          <UserItem
-            withCheckbox
-            key={user.login}
-            disabled={processing}
-            followed={storedFollowedUsers.indexOf(user.login) !== -1}
-            extended={users.extendedInfo[user.login]}
-            pending={users.currentTargets[user.login] || currentTargets[user.login]}
-            user={user}
-            checked={followList.findIndex(u => u.login === user.login) !== -1}
-            onClick={() => {
-              const currentIndex = followList.findIndex(u => u.login === user.login);
-              const newFollowList = [...followList];
+        {!isHidden &&
+          following.map((user: UserInfo, index: number) => (
+            <UserItem
+              withCheckbox
+              key={user.login}
+              disabled={processing}
+              followed={storedFollowedUsers.indexOf(user.login) !== -1}
+              extended={users.extendedInfo[user.login]}
+              pending={users.currentTargets[user.login] || currentTargets[user.login]}
+              user={user}
+              checked={followList.findIndex(u => u.login === user.login) !== -1}
+              onClick={() => {
+                const currentIndex = followList.findIndex(u => u.login === user.login);
+                const newFollowList = [...followList];
 
-              if (currentIndex !== -1) {
-                newFollowList.splice(currentIndex, 1);
-              } else {
-                newFollowList.splice(index, 0, user);
-              }
-              setFollowList(newFollowList);
-            }}
-          />
-        ))}
+                if (currentIndex !== -1) {
+                  newFollowList.splice(currentIndex, 1);
+                } else {
+                  newFollowList.splice(index, 0, user);
+                }
+                setFollowList(newFollowList);
+              }}
+            />
+          ))}
       </Section>
     </>
   );
