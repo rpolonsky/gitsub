@@ -119,7 +119,7 @@ const Subscribe = () => {
               const goodCoeffList = followList.filter(user => {
                 const extInfo = users.extendedInfo[user.login];
                 if (!extInfo) {
-                  return true;
+                  return false;
                 }
                 const { followers, following } = extInfo;
                 return following / followers > parseFloat(coeffThreshold);
@@ -140,7 +140,7 @@ const Subscribe = () => {
               const recentVisitors = followList.filter(user => {
                 const extInfo = users.extendedInfo[user.login];
                 if (!extInfo) {
-                  return true;
+                  return false;
                 }
 
                 return diffDays(new Date(), new Date(extInfo.updated_at)) <= lastVisitDays;
@@ -149,7 +149,7 @@ const Subscribe = () => {
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users who haven't visited more than {lastVisitDays} days
+            Uncheck users who haven't visited github more than {lastVisitDays} days
           </button>
 
           {!!storedFollowedUsers.length && (
