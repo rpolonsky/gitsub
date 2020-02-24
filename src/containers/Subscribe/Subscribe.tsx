@@ -59,7 +59,7 @@ const Subscribe = () => {
           type="text"
           value={sourceUsername}
           placeholder="ex.: rpolonsky"
-          onChange={e => setSourceUsername(e.target.value)}
+          onChange={e => setSourceUsername(e.target.value.trim())}
           onKeyUp={e => {
             if (e.keyCode === 13) {
               getUserFollowingList(sourceUsername, username, token);
@@ -108,8 +108,7 @@ const Subscribe = () => {
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users who follows less than {minFollowings} users <br /> (caution: may quickly
-            reach your requests limit)
+            Uncheck users who follows less than {minFollowings} users
           </button>
           <button
             onClick={async () => {
@@ -128,8 +127,7 @@ const Subscribe = () => {
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users with bad Following/Followed ratio <br /> (caution: may quickly reach your
-            requests limit)
+            Uncheck users with bad Following/Followed ratio
           </button>
 
           <button

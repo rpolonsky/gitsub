@@ -113,8 +113,7 @@ const Unsubscribe = () => {
             }}
             disabled={followers.loading || users.loading}
           >
-            Uncheck users with more than {minFollowers} followers <br /> (caution: may quickly reach
-            your requests limit)
+            Uncheck users with more than {minFollowers} followers
           </button>
           <button
             onClick={() => {

@@ -17,9 +17,9 @@ interface Subscribe {
   processing: boolean;
 }
 
-const MIN_TIMEOUT = 50;
+const MIN_TIMEOUT = 100;
 const MAX_TIMEOUT = 500;
-const MAX_SIMULTANEOUS_REQUESTS = 5;
+const MAX_SIMULTANEOUS_REQUESTS = 3;
 const MAX_PAGE_LIMIT = 0;
 const FOLLOWED_USERS_STORAGE_KEY = '_followedUsers';
 const GH_FOLLOWING_URL_TEMPLATE = '/api/gh/users/%USERNAME%/following?page=%PAGE%';
