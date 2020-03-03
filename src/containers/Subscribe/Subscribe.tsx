@@ -15,9 +15,9 @@ const Subscribe = () => {
   const [isHidden, setIsHidden] = useState<boolean>(false);
   const [followList, setFollowList] = useState<UserInfo[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
-  const [minFollowings, setMinFollowings] = useState<string | number>(1);
-  const [lastVisitDays, setLastVisitDays] = useState<string | number>(10);
-  const [coeffThreshold, setCoeffThreshold] = useState<string>('1.0');
+  const [minFollowings, setMinFollowings] = useState<number | string>(1);
+  const [lastVisitDays, setLastVisitDays] = useState<number | string>(4);
+  const [coeffThreshold, setCoeffThreshold] = useState<string>('0.7');
   const {
     subscribe: {
       getUserFollowingList,
@@ -96,7 +96,7 @@ const Subscribe = () => {
               const extendedInfoItems = Object.values(users.extendedInfo);
               const noExtInfo = diffBy(followList, extendedInfoItems, user => user.login);
               const notMuchFollowing = extendedInfoItems.filter(
-                user => user.following < minFollowings,
+                user => user.following < +minFollowings,
               );
 
               const list = diffBy(
@@ -108,7 +108,7 @@ const Subscribe = () => {
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users who follows less than {minFollowings} users
+            Uncheck users who follows less than {+minFollowings} users
           </button>
           <button
             onClick={async () => {
@@ -141,13 +141,13 @@ const Subscribe = () => {
                   return false;
                 }
 
-                return diffDays(new Date(), new Date(extInfo.updated_at)) <= lastVisitDays;
+                return diffDays(new Date(), new Date(extInfo.updated_at)) <= +lastVisitDays;
               });
               setFollowList(recentVisitors);
             }}
             disabled={loading || users.loading}
           >
-            Uncheck users who haven't visited github more than {lastVisitDays} days
+            Uncheck users who haven't visited github more than {+lastVisitDays} days
           </button>
 
           {!!storedFollowedUsers.length && (
@@ -186,8 +186,8 @@ const Subscribe = () => {
               className={s.minFollowingsInput}
               value={minFollowings}
               onChange={e => {
-                const val = +e.target.value;
-                setMinFollowings(val < 0 ? 0 : val);
+                const val = e.target.value;
+                setMinFollowings(+val < 0 && val !== '' ? 0 : val);
               }}
             />
           </div>
@@ -216,8 +216,8 @@ const Subscribe = () => {
               inputMode="numeric"
               pattern="[0-9]*"
               onChange={e => {
-                const val = +e.target.value;
-                setLastVisitDays(val < 0 ? 0 : val);
+                const val = e.target.value;
+                setLastVisitDays(+val < 0 && val !== '' ? 0 : val);
               }}
             />
           </div>

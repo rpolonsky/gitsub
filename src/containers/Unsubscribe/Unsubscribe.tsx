@@ -102,7 +102,7 @@ const Unsubscribe = () => {
               /* uncheck users with more than 'minFollowers' followers */
               const extendedInfoItems = Object.values(users.extendedInfo);
               const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
-              const muchFollowed = extendedInfoItems.filter(user => user.followers >= minFollowers);
+              const muchFollowed = extendedInfoItems.filter(user => user.followers >= +minFollowers);
 
               const list = diffBy(
                 unfollowList,
@@ -113,7 +113,7 @@ const Unsubscribe = () => {
             }}
             disabled={followers.loading || users.loading}
           >
-            Uncheck users with more than {minFollowers} followers
+            Uncheck users with more than {+minFollowers} followers
           </button>
           <button
             onClick={() => {
@@ -141,8 +141,8 @@ const Unsubscribe = () => {
               pattern="[0-9]*"
               value={minFollowers}
               onChange={e => {
-                const val = +e.target.value;
-                setMinFollowers(val < 0 ? 0 : val);
+                const val = e.target.value;
+                setMinFollowers(+val < 0 && val !== '' ? 0 : val);
               }}
             />
           </div>

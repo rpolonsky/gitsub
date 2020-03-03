@@ -15,9 +15,7 @@ interface Users {
   loading: boolean;
 }
 
-const MIN_TIMEOUT = 20;
-const MAX_TIMEOUT = 500;
-const MAX_SIMULTANEOUS_REQUESTS = 5;
+const MIN_TIMEOUT = 0;
 const CACHE_LIFETIME_DAYS = 7;
 const EXT_INFO_STORAGE_KEY = 'userExtendedInfo';
 const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
@@ -65,10 +63,8 @@ class UsersStore implements Users {
       };
 
       for (let i = 0; i < targets.length; i++) {
-        const requestCount = Object.values(this.currentTargets).filter(i => i).length;
-        const currentTarget = targets[i];
-        getInfo(currentTarget);
-        await sleepAsync(requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT);
+        getInfo(targets[i]);
+        await sleepAsync(MIN_TIMEOUT);
       }
     });
 
