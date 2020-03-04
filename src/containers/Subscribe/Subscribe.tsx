@@ -49,6 +49,10 @@ const Subscribe = () => {
   useEffect(() => {
     resetFollowingList();
     gtag('event', 'impression', { event_category: 'subscribe' });
+
+    return () => {
+      users.clearStoredExtendedInfo();
+    }
   }, []);
 
   return (
@@ -172,7 +176,7 @@ const Subscribe = () => {
             Uncheck users who haven't visited github more than {+lastVisitDays} days
           </button>
 
-          {!!storedFollowedUsers.length && (
+          {username && !!storedFollowedUsers.length && (
             <button
               onClick={() => {
                 setFollowList(followList.filter(user => !storedFollowedUsers.includes(user.login)));

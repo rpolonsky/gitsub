@@ -15,7 +15,7 @@ interface Users {
   loading: boolean;
 }
 
-const MIN_TIMEOUT = 0;
+const MIN_TIMEOUT = 10;
 const CACHE_LIFETIME_DAYS = 7;
 const EXT_INFO_STORAGE_KEY = 'userExtendedInfo';
 const GH_EXTENDED_INFO_URL_TEMPLATE = '/api/gh/users/%USERNAME%';
@@ -163,6 +163,16 @@ class UsersStore implements Users {
       this.main.setError(error.message ?? error);
     }
   };
+
+  @action clearStoredExtendedInfo = async () => {
+    try {
+      await localforage.setItem(EXT_INFO_STORAGE_KEY, {});
+      this.extendedInfo = {};
+    } catch (error) {
+      console.error('error', error);
+      this.main.setError(error.message ?? error);
+    }
+  }
 }
 
 export default UsersStore;

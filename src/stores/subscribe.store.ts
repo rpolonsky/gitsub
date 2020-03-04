@@ -17,7 +17,7 @@ interface Subscribe {
   processing: boolean;
 }
 
-const MIN_TIMEOUT = 100;
+const MIN_TIMEOUT = 250;
 const MAX_TIMEOUT = 500;
 const MAX_SIMULTANEOUS_REQUESTS = 3;
 const MAX_PAGE_LIMIT = 0;
