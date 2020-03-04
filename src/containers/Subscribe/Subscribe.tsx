@@ -16,6 +16,7 @@ const Subscribe = () => {
   const [followList, setFollowList] = useState<UserInfo[]>([]);
   const [sourceUsername, setSourceUsername] = useState<string>('');
   const [minFollowings, setMinFollowings] = useState<number | string>(1);
+  const [maxFollowers, setMaxFollowers] = useState<number | string>(0);
   const [lastVisitDays, setLastVisitDays] = useState<number | string>(4);
   const [coeffThreshold, setCoeffThreshold] = useState<string>('0.7');
   const {
@@ -110,6 +111,27 @@ const Subscribe = () => {
           >
             Uncheck users who follows less than {+minFollowings} users
           </button>
+
+          <button
+            onClick={async () => {
+              /* load/update extended user info */
+              await users.getUsersExtendedInfo(followList, username, token);
+              /* uncheck users with more than 'maxFollowers' followers */
+              const notMuchFollowed = followList.filter(user => {
+                const extInfo = users.extendedInfo[user.login];
+                if (!extInfo) {
+                  return false;
+                }
+
+                return extInfo.followers <= +maxFollowers;
+              });
+              setFollowList(notMuchFollowed);
+            }}
+            disabled={loading || users.loading}
+          >
+            Uncheck users with more than {+maxFollowers} followers
+          </button>
+
           <button
             onClick={async () => {
               /* load/update extended user info */
@@ -177,13 +199,13 @@ const Subscribe = () => {
             Uncheck all
           </button>
           <div>
-            <label htmlFor="minFollowings">Minimal number of followings:</label>
+            <label htmlFor="input">Minimal number of followings:</label>
             <input
               id="minFollowings"
+              className={s.input}
               type="number"
               inputMode="numeric"
               pattern="[0-9]*"
-              className={s.minFollowingsInput}
               value={minFollowings}
               onChange={e => {
                 const val = e.target.value;
@@ -192,10 +214,25 @@ const Subscribe = () => {
             />
           </div>
           <div>
+            <label htmlFor="maxFollowers">Maximum number of followers:</label>
+            <input
+              id="maxFollowers"
+              className={s.input}
+              value={maxFollowers}
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onChange={e => {
+                const val = e.target.value;
+                setMaxFollowers(+val < 0 && val !== '' ? 0 : val);
+              }}
+            />
+          </div>
+          <div>
             <label htmlFor="coeffThreshold">Following/Followed coeff. threshold:</label>
             <input
               id="coeffThreshold"
-              className={s.coeffThresholdInput}
+              className={s.input}
               value={coeffThreshold}
               onChange={e => {
                 const floatRegexp = /^[\d.]*$/;
@@ -210,7 +247,7 @@ const Subscribe = () => {
             <label htmlFor="lastVisitDays">Days after the last visit:</label>
             <input
               id="lastVisitDays"
-              className={s.lastVisitDaysInput}
+              className={s.input}
               value={lastVisitDays}
               type="number"
               inputMode="numeric"

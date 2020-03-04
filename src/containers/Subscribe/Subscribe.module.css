@@ -1,5 +1,3 @@
-.minFollowingsInput,
-.coeffThresholdInput,
-.lastVisitDaysInput {
+.input {
   width: 55px;
 }
