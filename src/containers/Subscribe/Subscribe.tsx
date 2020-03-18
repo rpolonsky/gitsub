@@ -20,6 +20,7 @@ const Subscribe = () => {
   const [maxFollowers, setMaxFollowers] = useState<number | string>(0);
   const [lastVisitDays, setLastVisitDays] = useState<number | string>(4);
   const [coeffThreshold, setCoeffThreshold] = useState<string>('0.7');
+  const [followTimeout, setFollowTimeout] = useState<number | string>(1000);
   const {
     subscribe: {
       getUserFollowingList,
@@ -263,6 +264,21 @@ const Subscribe = () => {
               }}
             />
           </div>
+          <div>
+            <label htmlFor="followTimeout">Timeout between follow requests:</label>
+            <input
+              id="followTimeout"
+              className={s.input}
+              value={followTimeout}
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onChange={e => {
+                const val = e.target.value;
+                setFollowTimeout(+val < 0 && val !== '' ? 0 : val);
+              }}
+            />
+          </div>
         </Section>
       )}
 
@@ -285,9 +301,7 @@ const Subscribe = () => {
           {isHidden ? 'Show users list' : 'Hide users list'}
         </button>
         {!isHidden && (
-          <button
-            onClick={() => setShowOnlyChecked(!showOnlyChecked)}
-          >
+          <button onClick={() => setShowOnlyChecked(!showOnlyChecked)}>
             {showOnlyChecked ? 'Show unchecked items' : 'Hide unchecked items'}
           </button>
         )}
@@ -296,7 +310,7 @@ const Subscribe = () => {
           <button
             onClick={async () => {
               gtag('event', 'follow-users', { event_category: 'subscribe' });
-              const processed = await followUsers(followList, username, token);
+              const processed = await followUsers(followList, username, token, +followTimeout);
               removeFromFollowingList(processed);
             }}
             disabled={loading || processing}

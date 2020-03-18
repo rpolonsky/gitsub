@@ -101,7 +101,12 @@ class SubscribeStore implements Subscribe {
       recursive();
     });
 
-  @action followUsers = (users: UserInfo[], username: string, token: string): Promise<string[]> =>
+  @action followUsers = (
+    users: UserInfo[],
+    username: string,
+    token: string,
+    timeout?: number,
+  ): Promise<string[]> =>
     new Promise(async (resolve, reject) => {
       const processed: string[] = [];
       const targets = [...users];
@@ -135,12 +140,9 @@ class SubscribeStore implements Subscribe {
           this.main.setRemainingRateLimit(headers);
           currentTarget.processed = true;
           this.currentTargets[currentTarget.login] = false;
+          this.storeFollowedUsers(currentTarget.login, username);
 
           if (!this.targets) {
-            this.storeFollowedUsers(
-              targets.map(u => u.login),
-              username,
-            );
             this.processing = false;
             resolve(processed);
           }
@@ -157,7 +159,9 @@ class SubscribeStore implements Subscribe {
         const requestCount = Object.values(this.currentTargets).filter(i => i).length;
         const currentTarget = targets[i];
         followUser(currentTarget);
-        await sleepAsync(requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT);
+        await sleepAsync(
+          timeout || (requestCount >= MAX_SIMULTANEOUS_REQUESTS ? MAX_TIMEOUT : MIN_TIMEOUT),
+        );
       }
     });
 

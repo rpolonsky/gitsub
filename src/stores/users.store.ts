@@ -172,7 +172,7 @@ class UsersStore implements Users {
       console.error('error', error);
       this.main.setError(error.message ?? error);
     }
-  }
+  };
 }
 
 export default UsersStore;
