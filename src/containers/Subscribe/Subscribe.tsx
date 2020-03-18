@@ -281,13 +281,12 @@ const Subscribe = () => {
       )}
 
       <Section title="list of connections">
-        <button onClick={() => setIsHidden(!isHidden)} disabled={loading || processing}>
+        <button onClick={() => setIsHidden(!isHidden)}>
           {isHidden ? 'Show users list' : 'Hide users list'}
         </button>
         {!isHidden && (
           <button
             onClick={() => setShowOnlyChecked(!showOnlyChecked)}
-            disabled={loading || processing}
           >
             {showOnlyChecked ? 'Show unchecked items' : 'Hide unchecked items'}
           </button>

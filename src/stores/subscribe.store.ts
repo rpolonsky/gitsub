@@ -112,10 +112,9 @@ class SubscribeStore implements Subscribe {
         return;
       }
 
-      this.processing = true;
-
       const followUser = async (currentTarget: UserInfo) => {
         try {
+          this.processing = true;
           this.currentTargets[currentTarget.login] = true;
           const { headers } = await axios.put(
             GH_FOLLOW_URL_TEMPLATE.replace('%USERNAME%', currentTarget.login),
@@ -149,6 +148,7 @@ class SubscribeStore implements Subscribe {
           console.error('error', error);
           this.main.setError(error.message ?? error);
           this.currentTargets[currentTarget.login] = false;
+          this.processing = false;
           reject(error);
         }
       };
