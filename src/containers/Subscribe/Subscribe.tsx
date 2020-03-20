@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import diffBy from 'lodash/differenceBy';
 import { observer } from 'mobx-react';
+import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 
 import UserItem from '../../components/UserItem/UserItem';
 import Section from '../../components/Section/Section';
 import { useBaseStore } from '../../stores';
 import { UserInfo } from '../../types';
+import { diffDays } from '../../utils';
+import { ROOT, SUBSCRIBE } from '../../utils/routes';
 
 import s from './Subscribe.module.css';
-import { diffDays } from '../../utils';
 
 const Subscribe = () => {
   const [isHidden, setIsHidden] = useState<boolean>(false);
@@ -38,6 +41,7 @@ const Subscribe = () => {
     users,
     main: { username, token },
   } = useBaseStore();
+  const { pathname } = useLocation();
 
   const readyToProcess = !!following.length && !loading && !processing;
 
@@ -59,6 +63,14 @@ const Subscribe = () => {
 
   return (
     <>
+      <Helmet>
+        <meta
+          name="description"
+          content="GitHub Subscriber is the best open-source application that helps you to find and follow GitHub users automatically and for free! Auto Follow & Unfollow, Check changes since last visit!"
+        />
+        <title>GitHub Subscriber - Follow GitHub users automatically</title>
+        {pathname === SUBSCRIBE && <link rel="canonical" href={window.location.origin + ROOT} />}
+      </Helmet>
       <Section title="user as source of connections">
         <label htmlFor="user[target]">User whose connections will be loaded:</label>
         <input

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import diffBy from 'lodash/differenceBy';
+import { Helmet } from 'react-helmet';
 
 import UserItem from '../../components/UserItem/UserItem';
 import Section from '../../components/Section/Section';
@@ -36,6 +37,15 @@ const Unsubscribe = () => {
 
   return (
     <>
+      <Helmet>
+        <meta
+          name="description"
+          content="GitHub Subscriber is the best open-source application that helps you to manage your followed GitHub users for free! Auto Follow & Unfollow, Check changes since last visit!"
+        />
+        <title>
+          GitHub Subscriber - Unfollow GitHub users from your following list automatically
+        </title>
+      </Helmet>
       <Section>
         {noCredentials ? (
           <>
@@ -102,7 +112,9 @@ const Unsubscribe = () => {
               /* uncheck users with more than 'minFollowers' followers */
               const extendedInfoItems = Object.values(users.extendedInfo);
               const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
-              const muchFollowed = extendedInfoItems.filter(user => user.followers >= +minFollowers);
+              const muchFollowed = extendedInfoItems.filter(
+                user => user.followers >= +minFollowers,
+              );
 
               const list = diffBy(
                 unfollowList,

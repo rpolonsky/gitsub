@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useLocation, useHistory } from 'react-router-dom';
 import cx from 'classnames';
 
-import { ROOT, UNSUBSCRIBE, FOLLOWERS } from '../../utils/routes';
+import { ROOT, UNSUBSCRIBE, FOLLOWERS, SUBSCRIBE } from '../../utils/routes';
 import { useBaseStore } from '../../stores';
 
 import Section from '../../components/Section/Section';
@@ -60,10 +60,10 @@ const Menu = () => {
       </Section>
       <Section
         onClick={() => {
-          push(ROOT);
+          push(SUBSCRIBE);
           setMenuState(false);
         }}
-        className={cx(s.button, { [s.active]: path === ROOT })}
+        className={cx(s.button, { [s.active]: [SUBSCRIBE, ROOT].includes(path) })}
       >
         Subscribe
       </Section>

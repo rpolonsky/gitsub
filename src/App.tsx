@@ -9,7 +9,7 @@ import Subscribe from './containers/Subscribe/Subscribe';
 import Followers from './containers/Followers/Followers';
 import Alert from './containers/Alert/Alert';
 
-import { UNSUBSCRIBE, FOLLOWERS, ROOT } from './utils/routes';
+import { SUBSCRIBE, UNSUBSCRIBE, FOLLOWERS, ROOT } from './utils/routes';
 
 import s from './App.module.css';
 
@@ -25,6 +25,7 @@ const App = () => {
               <Switch>
                 <Route path={UNSUBSCRIBE} component={Unsubscribe} />
                 <Route path={FOLLOWERS} component={Followers} />
+                <Route path={SUBSCRIBE} component={Subscribe} />
                 <Route exact path={ROOT} component={Subscribe} />
               </Switch>
             </div>
