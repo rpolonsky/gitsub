@@ -54,7 +54,8 @@
     "include": [
       "/",
       "/followers",
-      "/unsubscribe"
+      "/unsubscribe",
+      "/subscribe"
     ],
     "snapshotDelay": 300
   },
