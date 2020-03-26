@@ -13,6 +13,7 @@ import { useBaseStore } from '../../stores';
 import s from './Unsubscribe.module.css';
 
 const Unsubscribe = () => {
+  const [isHidden, setIsHidden] = useState<boolean>(false);
   const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
   const [pageLimit, setPageLimit] = useState<string | number>('');
   const [minFollowers, setMinFollowers] = useState<string | number>(10000);
@@ -180,6 +181,9 @@ const Unsubscribe = () => {
       )}
 
       <Section title="list of users that you follow">
+        <button onClick={() => setIsHidden(!isHidden)}>
+          {isHidden ? 'Show users list' : 'Hide users list'}
+        </button>
         {!!subscribe.following.length && (
           <button
             onClick={async () => {
@@ -194,8 +198,8 @@ const Unsubscribe = () => {
               : `Unfollow ${unfollowList.length} selected users`}
           </button>
         )}
-        {!subscribe.following.length && !subscribe.loading && 'yet empty...'}
-        {subscribe.following.map((user: UserInfo, index: number) => (
+        {!subscribe.following.length && !subscribe.loading && !isHidden && 'yet empty...'}
+        {!isHidden && subscribe.following.map((user: UserInfo, index: number) => (
           <UserItem
             withCheckbox
             key={user.login}
