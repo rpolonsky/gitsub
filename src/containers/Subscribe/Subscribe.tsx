@@ -21,9 +21,9 @@ const Subscribe = () => {
   const [sourceUsername, setSourceUsername] = useState<string>('');
   const [minFollowings, setMinFollowings] = useState<number | string>(1);
   const [maxFollowers, setMaxFollowers] = useState<number | string>(1);
-  const [lastVisitDays, setLastVisitDays] = useState<number | string>(4);
-  const [coeffThreshold, setCoeffThreshold] = useState<string>('0.7');
-  const [followTimeout, setFollowTimeout] = useState<number | string>(1000);
+  const [lastVisitDays, setLastVisitDays] = useState<number | string>(3);
+  const [coeffThreshold, setCoeffThreshold] = useState<string>('1');
+  const [followTimeout, setFollowTimeout] = useState<number | string>(800);
   const {
     subscribe: {
       getUserFollowingList,
