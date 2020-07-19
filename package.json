@@ -18,7 +18,7 @@
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mobx": "^5.15.4",
     "mobx-react": "^6.1.8",
     "prettier": "^1.19.1",
