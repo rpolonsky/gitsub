@@ -9,6 +9,7 @@ import Section from '../../components/Section/Section';
 
 import { UserInfo } from '../../types';
 import { useBaseStore } from '../../stores';
+import { diffDays } from '../../utils';
 
 import s from './Unsubscribe.module.css';
 
@@ -17,6 +18,7 @@ const Unsubscribe = () => {
   const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
   const [pageLimit, setPageLimit] = useState<string | number>('');
   const [minFollowers, setMinFollowers] = useState<string | number>(10000);
+  const [daysFromLastVisit, setDaysFromLastVisit] = useState<number>(30);
 
   const {
     users,
@@ -110,6 +112,7 @@ const Unsubscribe = () => {
             onClick={async () => {
               /* load/update extended user info */
               await users.getUsersExtendedInfo(unfollowList, username, token);
+
               /* uncheck users with more than 'minFollowers' followers */
               const extendedInfoItems = Object.values(users.extendedInfo);
               const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
@@ -127,6 +130,27 @@ const Unsubscribe = () => {
             disabled={followers.loading || users.loading}
           >
             Uncheck users with more than {+minFollowers} followers
+          </button>
+          <button
+            onClick={async () => {
+              /* load/update extended user info */
+              await users.getUsersExtendedInfo(unfollowList, username, token);
+              const extendedInfoItems = Object.values(users.extendedInfo);
+              const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
+              const recentVisitors = extendedInfoItems.filter(
+                user => diffDays(new Date(), new Date(user.updated_at)) <= +daysFromLastVisit,
+              );
+
+              const list = diffBy(
+                unfollowList,
+                [...noExtInfo, ...recentVisitors],
+                user => user.login,
+              );
+              setUnfollowList(list);
+            }}
+            disabled={followers.loading || users.loading}
+          >
+              Uncheck users who visited github in the last {daysFromLastVisit} days
           </button>
           <button
             onClick={() => {
@@ -156,6 +180,19 @@ const Unsubscribe = () => {
               onChange={e => {
                 const val = e.target.value;
                 setMinFollowers(+val < 0 && val !== '' ? 0 : val);
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="daysFromLastVisit">Days from last visit:</label>
+            <input
+              id="daysFromLastVisit"
+              type="string"
+              className={s.daysFromLastVisitInput}
+              value={daysFromLastVisit}
+              onChange={e => {
+                const val = e.target.value;
+                setDaysFromLastVisit(val);
               }}
             />
           </div>
