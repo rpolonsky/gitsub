@@ -17,7 +17,7 @@ const Unsubscribe = () => {
   const [isHidden, setIsHidden] = useState<boolean>(false);
   const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
   const [pageLimit, setPageLimit] = useState<string | number>('');
-  const [minFollowers, setMinFollowers] = useState<string | number>(10000);
+  const [minFollowers, setMinFollowers] = useState<string | number>(10);
   const [daysFromLastVisit, setDaysFromLastVisit] = useState<number>(30);
 
   const {
@@ -117,7 +117,7 @@ const Unsubscribe = () => {
               const extendedInfoItems = Object.values(users.extendedInfo);
               const noExtInfo = diffBy(unfollowList, extendedInfoItems, user => user.login);
               const muchFollowed = extendedInfoItems.filter(
-                user => user.followers >= +minFollowers,
+                user => user.followers < +minFollowers,
               );
 
               const list = diffBy(
@@ -129,7 +129,7 @@ const Unsubscribe = () => {
             }}
             disabled={followers.loading || users.loading}
           >
-            Uncheck users with more than {+minFollowers} followers
+            Uncheck users with less than {+minFollowers} followers
           </button>
           <button
             onClick={async () => {
