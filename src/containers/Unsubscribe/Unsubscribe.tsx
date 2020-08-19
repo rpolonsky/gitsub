@@ -15,6 +15,7 @@ import s from './Unsubscribe.module.css';
 
 const Unsubscribe = () => {
   const [isHidden, setIsHidden] = useState<boolean>(false);
+  const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false);
   const [unfollowList, setUnfollowList] = useState<UserInfo[]>([]);
   const [pageLimit, setPageLimit] = useState<string | number>('');
   const [minFollowers, setMinFollowers] = useState<string | number>(10);
@@ -221,6 +222,11 @@ const Unsubscribe = () => {
         <button onClick={() => setIsHidden(!isHidden)}>
           {isHidden ? 'Show users list' : 'Hide users list'}
         </button>
+        {!isHidden && (
+          <button onClick={() => setShowOnlyChecked(!showOnlyChecked)}>
+            {showOnlyChecked ? 'Show unchecked items' : 'Hide unchecked items'}
+          </button>
+        )}
         {!!subscribe.following.length && (
           <button
             onClick={async () => {
@@ -236,7 +242,12 @@ const Unsubscribe = () => {
           </button>
         )}
         {!subscribe.following.length && !subscribe.loading && !isHidden && 'yet empty...'}
-        {!isHidden && subscribe.following.map((user: UserInfo, index: number) => (
+        {!isHidden && subscribe.following.map((user: UserInfo, index: number) => {
+          const isChecked = unfollowList.findIndex(u => u.login === user.login) !== -1;
+          if (showOnlyChecked && !isChecked) {
+            return null;
+          }
+          return (
           <UserItem
             withCheckbox
             key={user.login}
@@ -257,7 +268,8 @@ const Unsubscribe = () => {
               setUnfollowList(newFollowList);
             }}
           />
-        ))}
+        );
+      })}
       </Section>
     </>
   );
